@@ -8,9 +8,14 @@ A while ago I tried to remake Space Station 13 in Minecraft. Then I forgot about
 This is what I got done:
 * Basic Atmospherics
 * Hacking
-* I did something with the inventory... code won't compile now.
+* Station hull blocks
+* Floor Tile Blocks
+* Lightbulb Block (Reskinned torch)
+* Reskinned Ladder Block
+* Customized inventory
 * Id Cards
 * Dragging Entities
 * Airlocks
+* Asteroid Dimension with Ores
 
 I'll actually commit the code when I get it working with a more recent Minecraft version.
