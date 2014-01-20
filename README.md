@@ -19,7 +19,7 @@ This is what I got done:
 * Asteroid Dimension with Ores
 * Beggining stages of a damage system
 
-I'll actually commit the code when I get it working with a more recent Minecraft version.
+[Showcase](http://imgur.com/a/QG0lr#0)
 
 How to Install
 --------------
@@ -31,6 +31,7 @@ How to Install
 
 File Structure
 --------------
-Eclipse Workspace: forge/mcp/eclipse
-Source: forge/mcp/src/minecraft/net/c0gg/ms13
-Assets: forge/mcp/src/minecraft/assets/ms13
+* Eclipse Workspace: forge/mcp/eclipse
+* Source: forge/mcp/src/minecraft/net/c0gg/ms13
+* Assets: forge/mcp/src/minecraft/assets/ms13
+
