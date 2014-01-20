@@ -17,5 +17,20 @@ This is what I got done:
 * Dragging Entities
 * Airlocks
 * Asteroid Dimension with Ores
+* Beggining stages of a damage system
 
 I'll actually commit the code when I get it working with a more recent Minecraft version.
+
+How to Install
+--------------
+1. Clone it.
+2. Download forge 9.11.1.965-src and merge the forge folder with the one in the repo.
+3. Run the forge install script.
+4. ???
+5. Profit!
+
+File Structure
+--------------
+Eclipse Workspace: forge/mcp/eclipse
+Source: forge/mcp/src/minecraft/net/c0gg/ms13
+Assets: forge/mcp/src/minecraft/assets/ms13

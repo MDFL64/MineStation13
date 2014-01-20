@@ -1,0 +1,387 @@
+package net.c0gg.ms13;
+
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import javax.naming.BinaryRefAddr;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.StepSound;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundManager;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemColored;
+import net.minecraft.item.ItemMultiTextureTile;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.Teleporter;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.ServerStarting;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+
+@Mod(modid="ms13", name=ModMinestation.nameFancy, version="0")
+@NetworkMod(clientSideRequired=true, serverSideRequired=false,channels={"ms13"},packetHandler=PacketHandlerMinestation.class)
+public class ModMinestation {
+	static final String nameFancy="MineStation13";
+	static final int baseGenIndex=240; //Keep generated blocks within the 1 byte limit. It might be cruddy, but it makes it easier to make the world generator work.
+	static final int baseBlockIndex=500;
+	static final int baseItemIndex=2500;
+	static final int dimensionIdAsteroid=13;
+	
+	static final int renderBlockAirlockFrameId = 50;
+	
+	static final RoundManager roundManager = new RoundManager();
+	
+	//Creative tab
+	static final CreativeTabs tabSpacestation = new CreativeTabs("tabMineStation") {
+        @Override
+		public ItemStack getIconItemStack() {
+        	return new ItemStack(blockStationBlock,1,0);
+        }
+	};
+	
+	//Blocks
+	static final Material materialStationMetal=new Material(MapColor.ironColor);
+	static final StepSound soundStationFootstep=new StepSound("stationMetal",1,1);
+	
+	
+	static final Block blockAsteroid=new BlockAsteroid(baseGenIndex);
+	
+	static final Block blockStationBlockFree=new BlockStationFree(baseBlockIndex).setHardness(.5f).setResistance(10).setStepSound(soundStationFootstep);
+	static final Block blockStationBlock=new BlockStationWelded(baseBlockIndex+1).setResistance(20).setStepSound(soundStationFootstep);
+	static final Block blockStationReinforcedFree=new BlockStationFree(baseBlockIndex+2).setHardness(1).setResistance(20).setStepSound(soundStationFootstep);
+	static final Block blockStationReinforced=new BlockStationWelded(baseBlockIndex+3).setResistance(40).setStepSound(soundStationFootstep);
+	
+	static final Block blockStationGlass=new BlockStationGlass(baseBlockIndex+4);
+	
+	static final Block blockAirlockAssembly=new BlockAirlockAssembly(baseBlockIndex+5).setStepSound(soundStationFootstep);
+	static final Block blockAirlockFrame=new BlockAirlockFrame(baseBlockIndex+6).setStepSound(soundStationFootstep);
+	
+	static final Block blockFloorTile=new BlockFloorTile(baseBlockIndex+7);
+	
+	static final Block blockLightbulb= new BlockLightbulb(baseBlockIndex+8);
+	static final Block blockLadder= new BlockStationLadder(baseBlockIndex+9);
+	
+	static final Block blockTeleport= new BlockTeleport(baseBlockIndex+100,Material.wood);
+	
+	//Items
+	static final Item itemScrewdriver=new ItemScrewdriver(baseItemIndex);
+	static final Item itemWelder=new ItemWelder(baseItemIndex+1);
+	static final Item itemIdCard=new ItemIdCard(baseItemIndex+2);
+	static final Item itemAntagonistCard=new ItemAntagonistCard(baseItemIndex+3);
+	static final Item itemWireCutters=new ItemHackingtool(baseItemIndex+4);
+	static final Item itemSolderGun=new ItemHackingtool(baseItemIndex+5);
+	static final Item itemMultitool=new ItemHackingtool(baseItemIndex+6);
+	static final Item itemCrowbar=new ItemCrowbar(baseItemIndex+7);
+	static final Item itemAirlockDoor=new ItemAirlockDoor(baseItemIndex+8);
+	
+	//I honestly don't know what goes here...It does tend to complain about anonymous items if you don't register items and blocks here, though.
+	@EventHandler
+	public void preload(FMLPreInitializationEvent event) {
+		//Block registry
+    	registerBlock(blockAsteroid,"asteroid",null);
+    	registerBlock(blockStationBlockFree,"stationBlockFree","Station Hull Block");
+    	registerBlock(blockStationBlock,"stationBlock","Station Hull Block (Welded)");
+    	registerBlock(blockStationReinforcedFree,"stationReinforcedFree","Reinforced Station Hull Block");
+    	registerBlock(blockStationReinforced,"stationReinforced","Reinforced Station Hull Block (Welded)");
+    	registerBlock(blockStationGlass,"stationGlass","Reinforced Glass");
+    	registerBlock(blockAirlockAssembly,"airlockAssembly","Airlock Assembly Component");
+    	registerBlock(blockAirlockFrame,"airlockFrame","Airlock Frame");
+    	registerBlock(blockFloorTile,"floortile",null);
+    	registerBlock(blockLightbulb,"lightbulb","Light Bulb");
+    	registerBlock(blockLadder,"ladder","Ladder");
+    	registerBlock(blockTeleport,"tempTeleport","TELEPORTAL");
+		
+    	//Item registry
+    	registerItem(itemScrewdriver,"screwdriver","Screwdriver");
+    	registerItem(itemWelder,"weldgun","Welding Gun");
+    	registerItem(itemIdCard,"idCard","ID Card");
+    	registerItem(itemAntagonistCard,"antagonistCard","Antagonist Card");
+    	registerItem(itemWireCutters,"wirecutters","Wirecutters");
+    	registerItem(itemSolderGun,"soldergun","Soldering Gun");
+    	registerItem(itemMultitool,"multitool","Multitool");
+    	registerItem(itemCrowbar,"crowbar","Crowbar");
+    	registerItem(itemAirlockDoor,"airlockdoor","Airlock Door");
+
+	}
+	
+    @EventHandler
+    public void load(FMLInitializationEvent event) {    	
+    	//TODO see if this should go somewhere else
+    	Item.itemsList[blockAsteroid.blockID]=new ItemMultiTextureTile(blockAsteroid.blockID-256,blockAsteroid,BlockAsteroid.subTypes);//.setUnlocalizedName(blockAsteroid.getUnlocalizedName2());
+    	Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
+    	
+    	//Dimension registry
+    	
+    	DimensionManager.registerProviderType(dimensionIdAsteroid,WorldProviderAsteroid.class,false);
+    	DimensionManager.registerDimension(dimensionIdAsteroid,dimensionIdAsteroid);
+    	
+    	//Ticker registry
+    	
+    	TickRegistry.registerTickHandler(new TickerAtmos(),Side.SERVER);
+    	TickRegistry.registerTickHandler(new TickerPhysExt(),Side.SERVER);
+    	
+    	TickRegistry.registerTickHandler(new TickerInvSwapper(),Side.CLIENT);
+    	
+    	//Language registry
+    	
+    	LanguageRegistry langReg = LanguageRegistry.instance();
+    	langReg.addStringLocalization("itemGroup.tabMineStation",nameFancy);
+    	langReg.addStringLocalization("container.airlocksetup","What access key should this airlock use?");
+    	
+    	//Block rendering registry
+    	RenderingRegistry.registerBlockHandler(new RenderBlockAirlockFrame());
+    	
+    	//Tile entity registry
+    	GameRegistry.registerTileEntity(TileEntityAirlock.class,"airlock");
+    	
+    	//Tile entity rendering registry
+    	ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAirlock.class, new RenderTileAirlock());
+    	
+    	//Key bind registry
+    	KeyBindingRegistry.registerKeyBinding(new KeyHandlerMinestation());
+    	
+    	//Register this for events
+    	MinecraftForge.EVENT_BUS.register(this);
+    }
+    
+    @ForgeSubscribe
+    public void loadSounds(SoundLoadEvent event) {
+    	//These sounds are pretty terrible...I was originally stealing stuff from HL2 but then decided it would be
+    	//a good idea not to commit that so I made my own placeholders.
+    	
+    	//I could not get them to work in 1.6
+    	
+    	event.manager.addSound("ms13:step/stationMetal1.wav");
+    	event.manager.addSound("ms13:step/stationMetal2.wav");
+    	event.manager.addSound("ms13:step/stationMetal3.wav");
+    	event.manager.addSound("ms13:step/stationMetal4.wav");
+    	
+    	event.manager.addSound("ms13:dig/stationMetal.wav");
+    }
+    
+    @EventHandler
+    public void serverStart(FMLServerStartingEvent event) {
+    	//Command
+    	ServerCommandManager serverCmd = ((ServerCommandManager)MinecraftServer.getServer().getCommandManager());
+    	serverCmd.registerCommand(new CommandAtmos());
+    	serverCmd.registerCommand(new CommandRound());
+    	serverCmd.registerCommand(new CommandStructure());
+    	
+    	//Add atmos system for map
+    	new AtmosSystem(MinecraftServer.getServer().worldServerForDimension(dimensionIdAsteroid));
+    }
+    
+    //TODO Should fancy names be stored in language files in future?
+    public static void registerBlock(Block b, String name, String fancyName) {
+	    b.setUnlocalizedName("ms13:"+name);
+	    b.setTextureName("ms13:"+name);
+    	
+    	if (fancyName!=null) {
+    		LanguageRegistry.instance().addStringLocalization(b.getUnlocalizedName()+".name",fancyName);
+    	}
+    	
+    	GameRegistry.registerBlock(b,b.getUnlocalizedName());
+    }
+    
+    public static void registerItem(Item i,String name, String fancyName) {
+	    i.setUnlocalizedName("ms13:"+name);
+	    i.setTextureName("ms13:"+name);
+    	
+    	if (fancyName!=null) {
+    		LanguageRegistry.instance().addStringLocalization(i.getUnlocalizedName()+".name",fancyName);
+    	}
+    	
+    	GameRegistry.registerItem(i,i.getUnlocalizedName());
+    }
+    
+    @ForgeSubscribe
+    public void onEntJoined(EntityJoinWorldEvent event) {
+    	if (event.entity instanceof EntityPlayer) {
+    		EntityPlayer ply = (EntityPlayer)event.entity;
+    		
+    		ply.inventory = new MsInvInventory(ply);
+    		ply.inventoryContainer=new MsInvContainer(ply.inventory,!ply.worldObj.isRemote,ply);
+    		ply.openContainer=ply.inventoryContainer;
+    	}
+    }
+    
+    @ForgeSubscribe
+    public void onEntDamaged(LivingHurtEvent event) {
+    	event.setCanceled(true);
+    	DamageManager.applyDamage(event.source,event.ammount);
+    }
+}
+
+class BlockTeleport extends Block {
+	public BlockTeleport(int par1, Material par2Material) {
+		super(par1, par2Material);
+		setCreativeTab(ModMinestation.tabSpacestation);
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int par2, int par3, int par4, EntityPlayer player, int par6, float par7, float par8, float par9)
+    {
+		if (player instanceof EntityPlayerMP) {
+			MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)player,ModMinestation.dimensionIdAsteroid,new TeleporterSpaceStation());
+		}
+        return true;
+    }
+}
+
+class TeleporterSpaceStation extends Teleporter {
+	public TeleporterSpaceStation() {
+		super(MinecraftServer.getServer().worldServerForDimension(0));
+	}
+	
+	@Override
+	public void placeInPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
+    {
+        par1Entity.setLocationAndAngles(0,80,0,par1Entity.rotationYaw,0.0f);
+        par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0d;
+    }
+}
+
+class CommandAtmos extends CommandBase {
+
+	@Override
+	public String getCommandName() {
+		return "atmos";
+	}
+
+	@Override
+	public void processCommand(ICommandSender sender, String[] astring) {
+		if(sender instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer)sender;
+			AtmosSystem atmos = AtmosSystem.getForWorld(player.worldObj);
+			if (astring.length>0&&atmos!=null) {
+				ChunkPosition pos = new ChunkPosition(player.getPosition(1));
+				if (astring[0].equals("put")) {
+					atmos.testPut(pos);
+				} else if (astring[0].equals("get")) {
+					player.addChatMessage(atmos.testGet(pos));
+				} else if (astring[0].equals("count")) {
+					player.addChatMessage(atmos.zoneCount()+" atmos areas active.");
+				}
+			}
+		}
+	}
+
+	@Override
+	public String getCommandUsage(ICommandSender icommandsender) {
+		return "This is the atmospheric diagnostic/debug command. See source for usage.";
+	}
+}
+
+class CommandRound extends CommandBase {
+
+	@Override
+	public String getCommandName() {
+		return "round";
+	}
+
+	@Override
+	public void processCommand(ICommandSender sender, String[] astring) {
+		if (astring.length>0) {
+			if (astring[0].equals("new")) {
+				ModMinestation.roundManager.newRound();
+			}
+		}
+	}
+
+	@Override
+	public String getCommandUsage(ICommandSender icommandsender) {
+		return "This command is supposed to set up/reset the space station game. It currently does not do much.";
+	}
+}
+
+class CommandStructure extends CommandBase {
+
+	@Override
+	public String getCommandName() {
+		return "struct";
+	}
+
+	@Override
+	public void processCommand(ICommandSender sender, String[] astring) {
+		if(sender instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer)sender;
+			World world = player.worldObj;
+			if (astring.length>0) {
+				if (astring[0].equals("save")&&astring.length>1) {
+					String saveName=astring[1];
+					
+					MovingObjectPosition hit = PlayerUtil.lookTraceBlocks(player,50);
+					if (hit!=null)
+						StructureManager.save(saveName,player.worldObj,new ChunkPosition(hit.blockX,hit.blockY,hit.blockZ));
+				} else if (astring[0].equals("load")&&astring.length>1) {
+					String saveName=astring[1];
+					
+					MovingObjectPosition hit = PlayerUtil.lookTraceBlocks(player,50);
+					if (hit!=null)
+						StructureManager.load(saveName, player.worldObj, new StructurePlacerSimple(hit.blockX,hit.blockY,hit.blockZ));
+				}
+			}
+		}
+	}
+
+	@Override
+	public String getCommandUsage(ICommandSender icommandsender) {
+		return "This command saves and loads structures. See source for usage.";
+	}
+}
