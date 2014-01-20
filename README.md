@@ -19,7 +19,7 @@ This is what I got done:
 * Asteroid Dimension with Ores
 * Beggining stages of a damage system
 
-[Showcase](http://imgur.com/a/QG0lr#0)
+[See the showcase!](http://imgur.com/a/QG0lr#0)
 
 How to Install
 --------------
