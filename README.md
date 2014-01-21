@@ -24,10 +24,11 @@ This is what I got done:
 How to Install
 --------------
 1. Clone it.
-2. Download forge 9.11.1.965-src and merge the forge folder with the one in the repo.
+2. Download forge 9.11.1.965-src to a seperate directory.
 3. Run the forge install script.
-4. ???
-5. Profit!
+4. Copy the forge folder you downloaded over the one in the repo.
+5. ???
+6. Profit!
 
 File Structure
 --------------
