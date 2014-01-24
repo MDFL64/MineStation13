@@ -3,6 +3,7 @@ package net.c0gg.ms13;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -12,184 +13,56 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 
-public class MsInvContainer extends Container {
-	/** The crafting matrix inventory. */
-    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
-    public IInventory craftResult = new InventoryCraftResult();
-	
-    /** Determines if inventory manipulation should be handled. */
-    public boolean isLocalWorld = false;
-    protected final EntityPlayer thePlayer;
-    
-	public MsInvContainer(InventoryPlayer inventory, boolean par2, EntityPlayer par3EntityPlayer) {
-		this.isLocalWorld = par2;
-        this.thePlayer = par3EntityPlayer;
+/* This is one of the clientside parts of the inventory.
+ * It displays the slots on the gui and sends changes to the server.
+ * Or something. The first version used a modified COPY of ContainerPlayer,
+ * but it should be safe to create a subclass of ContainerPlayer.
+ */
+
+public class MsInvContainer extends ContainerPlayer {
+	public MsInvContainer(EntityPlayer ply) {
+		super(ply.inventory,!ply.worldObj.isRemote,ply);
+		
+		//Undo what the parent constructor did.
+		inventorySlots.clear();
+        inventoryItemStacks.clear();
         
-        addSlotToContainer(new SlotCrafting(inventory.player, this.craftMatrix, this.craftResult, 0, 224, 36));
+        //The entire hotbar must be kept... Too much vanilla code relies on the hotbar having 9 slots.
+        //We can probably just make the other x slots unusable.
+        for (int i = 0; i < ((MsInvInventory)ply.inventory).getUsableSlots(); ++i) {
+            addSlotToContainer(new Slot(ply.inventory, i, 6 + i * 18, 164));
+        }
         
-        for (int i = 0; i < 2; ++i)
-        {
-            for (int j = 0; j < 2; ++j)
-            {
-                addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, 168 + j * 18, 26 + i * 18));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 9, 6, 6));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 10, 26, 6));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 11, 46, 6));
+        
+        addSlotToContainer(new MsInvSlot(ply.inventory, 12, 6, 26));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 13, 26, 26));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 14, 46, 26));
+        
+        addSlotToContainer(new MsInvSlot(ply.inventory, 15, 6, 46));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 16, 26, 46));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 17, 46, 46));
+        
+        addSlotToContainer(new MsInvSlot(ply.inventory, 18, 6, 66));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 19, 26, 66));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 20, 46, 66));
+        
+        addSlotToContainer(new MsInvSlot(ply.inventory, 21, 26, 86));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 22, 46, 86));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 23, 46, 84));
+        
+        addSlotToContainer(new MsInvSlot(ply.inventory, 24, 46, 102));
+        
+        for (int x = 0;x<12;x++) {
+        	for (int y = 0;y<2;y++) { //This will probably use a seperate slot class when it actually works
+        		addSlotToContainer(new MsInvSlot(ply.inventory, 25+x+y*12, 6+x*18, 124+y*18));
             }
         }
-        
-        //Armor-Vanilla
-        addSlotToContainer(new SlotArmorMs(inventory,39, 88, 8,0)); // 0 helm
-        addSlotToContainer(new SlotArmorMs(inventory,38, 88, 26,1)); // 1 suit body
-        addSlotToContainer(new SlotArmorMs(inventory,37, 88, 44,2)); // 2 suit legs
-        addSlotToContainer(new SlotArmorMs(inventory,36, 88, 62,3)); // 3 shoes
-
-        for (int i = 0; i < 3; ++i)
-        {
-            for (int j = 0; j < 9; ++j)
-            {
-                addSlotToContainer(new Slot(inventory, j + (i + 1) * 9, 88 + j * 18, 84 + i * 18));
-            }
-        }
-
-        for (int i = 0; i < 9; ++i)
-        {
-            addSlotToContainer(new Slot(inventory, i, 88 + i * 18, 142));
-        }
-        
-        //Armor-Custom
-        addSlotToContainer(new SlotArmorMs(inventory,40, 70, 8,4)); // 4 face
-        addSlotToContainer(new SlotArmorMs(inventory,41, 70, 26,5)); // 5 shirt
-        addSlotToContainer(new SlotArmorMs(inventory,42, 70, 44,6)); // 6 pants
-        
-        addSlotToContainer(new SlotArmorMs(inventory,43, 52, 8,7)); // 7 eye
-        addSlotToContainer(new SlotArmorMs(inventory,44, 52, 26,8)); // 8 back
-        addSlotToContainer(new SlotArmorMs(inventory,45, 52, 44,9)); // 9 belt
-        
-        addSlotToContainer(new SlotArmorMs(inventory,46, 34, 8,10)); // 10 eye
-        addSlotToContainer(new SlotArmorMs(inventory,47, 34, 35,11)); // 11 back
-        
-        onCraftMatrixChanged(this.craftMatrix);
 	}
 	
-	/**
-     * Callback for when the crafting matrix is changed.
-     */
-	@Override
-    public void onCraftMatrixChanged(IInventory par1IInventory)
-    {
-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.thePlayer.worldObj));
-    }
-
-    /**
-     * Callback for when the crafting gui is closed.
-     */
-    @Override
-    public void onContainerClosed(EntityPlayer par1EntityPlayer)
-    {
-        super.onContainerClosed(par1EntityPlayer);
-
-        for (int i = 0; i < 4; ++i)
-        {
-            ItemStack itemstack = this.craftMatrix.getStackInSlotOnClosing(i);
-
-            if (itemstack != null)
-            {
-                par1EntityPlayer.dropPlayerItem(itemstack);
-            }
-        }
-
-        this.craftResult.setInventorySlotContents(0, (ItemStack)null);
-    }
-	
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
-	}
-	
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
-    {
-        ItemStack itemstack = null;
-        Slot slot = (Slot)this.inventorySlots.get(par2);
-
-        if (slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-
-            if (par2 == 0)
-            {
-                if (!this.mergeItemStack(itemstack1, 17, 53, true))
-                {
-                    return null;
-                }
-
-                slot.onSlotChange(itemstack1, itemstack);
-            }
-            else if (par2 >= 1 && par2 < 5)
-            {
-                if (!this.mergeItemStack(itemstack1, 17, 53, false))
-                {
-                    return null;
-                }
-            }
-            else if (par2 >= 5 && par2 < 17)
-            {
-                if (!this.mergeItemStack(itemstack1, 17, 53, false))
-                {
-                    return null;
-                }
-            }
-            else if (itemstack.getItem() instanceof ItemArmor && !((Slot)this.inventorySlots.get(5 + ((ItemArmor)itemstack.getItem()).armorType)).getHasStack())
-            {
-                int j = 5 + ((ItemArmor)itemstack.getItem()).armorType;
-
-                if (!this.mergeItemStack(itemstack1, j, j + 1, false))
-                {
-                    return null;
-                }
-            }
-            else if (par2 >= 17 && par2 < 44)
-            {
-                if (!this.mergeItemStack(itemstack1, 44, 53, false))
-                {
-                    return null;
-                }
-            }
-            else if (par2 >= 44 && par2 < 53)
-            {
-                if (!this.mergeItemStack(itemstack1, 17, 44, false))
-                {
-                    return null;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, 17, 53, false))
-            {
-                return null;
-            }
-
-            if (itemstack1.stackSize == 0)
-            {
-                slot.putStack((ItemStack)null);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
-
-            if (itemstack1.stackSize == itemstack.stackSize)
-            {
-                return null;
-            }
-
-            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
-        }
-
-        return itemstack;
-    }
-	
-	//Not sure what this does, but
-	@Override
-	public boolean func_94530_a(ItemStack par1ItemStack, Slot par2Slot)
-    {
-        return par2Slot.inventory != this.craftResult && super.func_94530_a(par1ItemStack, par2Slot);
+	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2) {
+		return null;
     }
 }

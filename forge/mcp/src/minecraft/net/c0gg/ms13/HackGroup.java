@@ -25,7 +25,7 @@ public enum HackGroup {
 		return (wires & (1<<functionMappings[function])) !=0;
 	}
 	
-	//Fisher–Yates yoloswag
+	//Fisher-Yates yoloswag
 	private static void shuffleArray(byte[] ar)
 	{
 		Random rnd = new Random();

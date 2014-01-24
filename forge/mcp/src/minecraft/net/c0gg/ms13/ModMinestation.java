@@ -16,12 +16,16 @@ import java.util.Queue;
 
 import javax.naming.BinaryRefAddr;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommandManager;
@@ -30,6 +34,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemMultiTextureTile;
@@ -43,12 +48,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -256,7 +264,7 @@ public class ModMinestation {
     		EntityPlayer ply = (EntityPlayer)event.entity;
     		
     		ply.inventory = new MsInvInventory(ply);
-    		ply.inventoryContainer=new MsInvContainer(ply.inventory,!ply.worldObj.isRemote,ply);
+    		ply.inventoryContainer=new MsInvContainer(ply);
     		ply.openContainer=ply.inventoryContainer;
     	}
     }
@@ -266,6 +274,13 @@ public class ModMinestation {
     	event.setCanceled(true);
     	DamageManager.applyDamage(event.source,event.ammount);
     }
+    
+    /*@ForgeSubscribe //something should probably be done with this later...
+    public void onDrawHotbar(RenderGameOverlayEvent event) {
+    	if (event.type==ElementType.HOTBAR && event.isCancelable()) { //Only PRE events are can be canceled.
+    		event.setCanceled(true);
+    	}
+    }*/
 }
 
 class BlockTeleport extends Block {
