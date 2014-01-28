@@ -56,6 +56,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -137,6 +138,8 @@ public class ModMinestation {
 	static final Item itemMultitool=new ItemHackingtool(baseItemIndex+6);
 	static final Item itemCrowbar=new ItemCrowbar(baseItemIndex+7);
 	static final Item itemAirlockDoor=new ItemAirlockDoor(baseItemIndex+8);
+	static final Item itemJumpsuitPants=new ItemPants(baseItemIndex+9);
+	static final Item itemJumpsuitShirt=new ItemShirt(baseBlockIndex+10);
 	
 	//I honestly don't know what goes here...It does tend to complain about anonymous items if you don't register items and blocks here, though.
 	@EventHandler
@@ -165,6 +168,8 @@ public class ModMinestation {
     	registerItem(itemMultitool,"multitool","Multitool");
     	registerItem(itemCrowbar,"crowbar","Crowbar");
     	registerItem(itemAirlockDoor,"airlockdoor","Airlock Door");
+    	registerItem(itemJumpsuitPants,"pantsGeneric","Pants");
+    	registerItem(itemJumpsuitShirt,"shirtGeneric","Shirt");
 
 	}
 	
@@ -200,6 +205,9 @@ public class ModMinestation {
     	
     	//Tile entity rendering registry
     	ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAirlock.class, new RenderTileAirlock());
+    	
+    	//Entity Rendering registry
+    	RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new RenderMobPlayer());
     	
     	//Key bind registry
     	KeyBindingRegistry.registerKeyBinding(new KeyHandlerMinestation());

@@ -8,13 +8,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ReportedException;
+import net.minecraftforge.common.MinecraftForge;
 
 /* The shared part of the inventory system.
  * This is the only part that runs on the server.
  * It can be safely based off of the player's inventory class.
  * 
- * It is NOT safe to make the inventory arrays too small...
+ * 
  */
 
 
@@ -22,15 +24,20 @@ import net.minecraft.util.ReportedException;
 
 public class MsInvInventory extends InventoryPlayer {
 	private int usableSlotCount;
+	public TexturePlayer texture;
 	
-	public MsInvInventory(EntityPlayer par1EntityPlayer) {
-		super(par1EntityPlayer);
+	public MsInvInventory(EntityPlayer player) {
+		super(player);
 		
 		//Hotbar - Worn Stuff - Pack
 		mainInventory = new ItemStack[9+16+24];
+		//We don't actually use this
 		armorInventory= new ItemStack[4];
 		
 		usableSlotCount=2;
+		
+		if (player.worldObj.isRemote)
+			texture = new TexturePlayer(this);
 	}
 	
 	public int getUsableSlots() {

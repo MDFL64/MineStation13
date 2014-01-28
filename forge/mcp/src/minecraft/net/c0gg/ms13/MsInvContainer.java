@@ -42,15 +42,15 @@ public class MsInvContainer extends ContainerPlayer {
         addSlotToContainer(new MsInvSlot(ply.inventory, 14, 46, 26));
         
         addSlotToContainer(new MsInvSlot(ply.inventory, 15, 6, 46));
-        addSlotToContainer(new MsInvSlot(ply.inventory, 16, 26, 46));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 16, 26, 46, ItemShirt.class));
         addSlotToContainer(new MsInvSlot(ply.inventory, 17, 46, 46));
         
         addSlotToContainer(new MsInvSlot(ply.inventory, 18, 6, 66));
-        addSlotToContainer(new MsInvSlot(ply.inventory, 19, 26, 66));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 19, 26, 66, ItemPants.class));
         addSlotToContainer(new MsInvSlot(ply.inventory, 20, 46, 66));
         
-        addSlotToContainer(new MsInvSlot(ply.inventory, 21, 26, 86));
-        addSlotToContainer(new MsInvSlot(ply.inventory, 22, 46, 86));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 21, 6, 86));
+        addSlotToContainer(new MsInvSlot(ply.inventory, 22, 26, 86));
         addSlotToContainer(new MsInvSlot(ply.inventory, 23, 46, 84));
         
         addSlotToContainer(new MsInvSlot(ply.inventory, 24, 46, 102));
