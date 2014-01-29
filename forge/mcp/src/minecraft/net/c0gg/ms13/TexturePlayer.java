@@ -20,6 +20,7 @@ public class TexturePlayer {
 	static BufferedImage txBaseF = loadImage("ms13:textures/mob/base_f.png");
 	
 	private int id;
+	private int idSuit;
 	
 	public boolean gender;
 	
@@ -36,6 +37,9 @@ public class TexturePlayer {
 		id = TextureUtil.glGenTextures();
 		TextureUtil.allocateTexture(id, 64, 32);
 		
+		idSuit= TextureUtil.glGenTextures();
+		TextureUtil.allocateTexture(idSuit, 64, 32);
+		
 		//Most of the stuff in here should eventually be determined by the player inventory class.
 		
 		//True for female
@@ -51,6 +55,8 @@ public class TexturePlayer {
 	
 	public void rebuild() {
 		BufferedImage img = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage imgSuit = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+		
 		for (int x=0;x<64;x++) {
 			for (int y=0;y<32;y++) {
 				if (x<32 || y>15)
@@ -66,6 +72,16 @@ public class TexturePlayer {
 		img.setRGB(10, 12, colorEyes);
 		img.setRGB(13, 12, colorEyes);
 		
+		//Gloves
+		addLayer(img,inventory.mainInventory[9]);
+		
+		//Shoes
+		ItemStack stackShoes = inventory.mainInventory[22];
+		if (stackShoes !=null && stackShoes.getItem() instanceof ItemBoots)
+			addLayer(imgSuit,stackShoes);
+		else
+			addLayer(img,stackShoes);
+		
 		//Pants
 		addLayer(img,inventory.mainInventory[19]);
 		//Shirt
@@ -73,10 +89,11 @@ public class TexturePlayer {
 		
 		if (inventory.mainInventory[16]!= null && inventory.mainInventory[16].getItem() instanceof ItemClothing) {
 			ItemClothing item = (ItemShirt)inventory.mainInventory[16].getItem();
-			addLayer(img,item.getClothingTexture(inventory.mainInventory[16]),item.getColorFromItemStack(inventory.mainInventory[16],0)+0x88000000);
+			addLayer(img,item.getClothingTexture(inventory.mainInventory[16]),item.getColorFromItemStack(inventory.mainInventory[16],0)+0xFF000000);
 		}
 		
 		TextureUtil.uploadTextureImageSub(id, img, 0, 0, false, false);
+		TextureUtil.uploadTextureImageSub(idSuit, imgSuit, 0, 0, false, false);
 	}
 	
 	//Add layer from a clothing item
@@ -111,6 +128,10 @@ public class TexturePlayer {
 	
 	public void bind() {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+	}
+	
+	public void bindSuit() {
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, idSuit);
 	}
 	
 	public static BufferedImage loadImage(String resourceName) {

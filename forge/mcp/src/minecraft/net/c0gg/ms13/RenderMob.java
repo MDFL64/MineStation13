@@ -16,11 +16,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderMob extends RendererLivingEntity {
 	private ModelBiped modelBiped;
+	private ModelBiped modelSuit;
 	
 	public RenderMob() {
 		super(new ModelBiped(), .5f);
 		
 		modelBiped= (ModelBiped)this.mainModel;
+		modelSuit= new ModelBiped(.5f);
 		renderManager= RenderManager.instance;
 	}
 	
@@ -53,6 +55,20 @@ public class RenderMob extends RendererLivingEntity {
         modelBiped.isSneak=false;
         modelBiped.heldItemLeft= modelBiped.heldItemRight= 0;
 	}
+	
+	@Override
+	protected int shouldRenderPass(EntityLivingBase entity, int pass, float par3)
+    {
+		if (pass==0) {
+			this.setRenderPassModel(modelSuit);
+			
+			EntityPlayer ply = (EntityPlayer)entity;
+			MsInvInventory inv = (MsInvInventory)ply.inventory;
+			inv.texture.bindSuit();
+			return 1;
+		}
+        return -1;
+    }
 	
 	@Override
 	protected void renderEquippedItems(EntityLivingBase entity, float par2)
@@ -90,7 +106,6 @@ public class RenderMob extends RendererLivingEntity {
 		EntityPlayer ply = (EntityPlayer)entity;
 		MsInvInventory inv = (MsInvInventory)ply.inventory;
 		inv.texture.bind();
-		
 		
         //Grab texture from entity and do coolstuff
     }

@@ -138,8 +138,11 @@ public class ModMinestation {
 	static final Item itemMultitool=new ItemHackingtool(baseItemIndex+6);
 	static final Item itemCrowbar=new ItemCrowbar(baseItemIndex+7);
 	static final Item itemAirlockDoor=new ItemAirlockDoor(baseItemIndex+8);
-	static final Item itemJumpsuitPants=new ItemPants(baseItemIndex+9);
-	static final Item itemJumpsuitShirt=new ItemShirt(baseBlockIndex+10);
+	static final Item itemPants=new ItemPants(baseItemIndex+9);
+	static final Item itemShirt=new ItemShirt(baseItemIndex+10);
+	static final Item itemGloves=new ItemGloves(baseItemIndex+11);
+	static final Item itemShoes=new ItemShoes(baseItemIndex+12);
+	static final Item itemBoots=new ItemBoots(baseItemIndex+13);
 	
 	//I honestly don't know what goes here...It does tend to complain about anonymous items if you don't register items and blocks here, though.
 	@EventHandler
@@ -168,8 +171,12 @@ public class ModMinestation {
     	registerItem(itemMultitool,"multitool","Multitool");
     	registerItem(itemCrowbar,"crowbar","Crowbar");
     	registerItem(itemAirlockDoor,"airlockdoor","Airlock Door");
-    	registerItem(itemJumpsuitPants,"pantsGeneric","Pants");
-    	registerItem(itemJumpsuitShirt,"shirtGeneric","Shirt");
+    	registerItem(itemPants,"pantsGeneric","Pants");
+    	registerItem(itemShirt,"shirtGeneric","Shirt");
+    	
+    	registerItem(itemGloves,"glovesGeneric","Gloves");
+    	registerItem(itemShoes,"shoesGeneric","Shoes");
+    	registerItem(itemBoots,"bootsGeneric","Boots");
 
 	}
 	

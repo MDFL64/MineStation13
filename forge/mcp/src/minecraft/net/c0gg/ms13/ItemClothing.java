@@ -12,6 +12,9 @@ public abstract class ItemClothing extends net.minecraft.item.Item {
 	
 	protected static final BufferedImage imgShirt= TexturePlayer.loadImage("ms13:textures/mob/shirt_generic.png");
 	protected static final BufferedImage imgPants= TexturePlayer.loadImage("ms13:textures/mob/pants_generic.png");
+	protected static final BufferedImage imgGloves= TexturePlayer.loadImage("ms13:textures/mob/gloves_generic.png");
+	protected static final BufferedImage imgShoes= TexturePlayer.loadImage("ms13:textures/mob/shoes_generic.png");
+	protected static final BufferedImage imgBoots= TexturePlayer.loadImage("ms13:textures/mob/boots_generic.png");
 	
 	public ItemClothing(int par1) {
 		super(par1);
