@@ -104,11 +104,10 @@ public class ModMinestation {
         }
 	};
 	
-	//Blocks
 	static final Material materialStationMetal=new Material(MapColor.ironColor);
-	static final StepSound soundStationFootstep=new StepSound("stationMetal",1,1);
+	static final StepSound soundStationFootstep=new StepSoundMs("stationMetal",1,1);
 	
-	
+	//Blocks
 	static final Block blockAsteroid=new BlockAsteroid(baseGenIndex);
 	
 	static final Block blockStationBlockFree=new BlockStationFree(baseBlockIndex).setHardness(.5f).setResistance(10).setStepSound(soundStationFootstep);
@@ -227,8 +226,6 @@ public class ModMinestation {
     public void loadSounds(SoundLoadEvent event) {
     	//These sounds are pretty terrible...I was originally stealing stuff from HL2 but then decided it would be
     	//a good idea not to commit that so I made my own placeholders.
-    	
-    	//I could not get them to work in 1.6
     	
     	event.manager.addSound("ms13:step/stationMetal1.wav");
     	event.manager.addSound("ms13:step/stationMetal2.wav");
