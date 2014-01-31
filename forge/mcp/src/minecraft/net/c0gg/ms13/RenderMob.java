@@ -77,6 +77,12 @@ public class RenderMob extends RendererLivingEntity {
 		//I assume this won't network well
 		ItemStack stackL = ply.inventory.mainInventory[0];
 		if (stackL!=null) {
+			int c = stackL.getItem().getColorFromItemStack(stackL, 0);
+            float r = (float)(c >> 16 & 255) / 255.0F;
+            float g = (float)(c >> 8 & 255) / 255.0F;
+            float b = (float)(c & 255) / 255.0F;
+            GL11.glColor4f(r, g, b, 1);
+			
 			GL11.glPushMatrix();
 			modelBiped.bipedLeftArm.postRender(0);
 			GL11.glTranslatef(.4f, .8f, -.05f);
@@ -89,6 +95,12 @@ public class RenderMob extends RendererLivingEntity {
 		
 		ItemStack stackR = ply.inventory.mainInventory[1];
 		if (stackR!=null) {
+			int c = stackR.getItem().getColorFromItemStack(stackR, 0);
+            float r = (float)(c >> 16 & 255) / 255.0F;
+            float g = (float)(c >> 8 & 255) / 255.0F;
+            float b = (float)(c & 255) / 255.0F;
+            GL11.glColor4f(r, g, b, 1);
+			
 			GL11.glPushMatrix();
 			modelBiped.bipedRightArm.postRender(0);
 			GL11.glTranslatef(-.4f, .8f, -.05f);
