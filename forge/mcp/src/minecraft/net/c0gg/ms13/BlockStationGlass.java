@@ -32,7 +32,7 @@ public class BlockStationGlass extends BlockBreakable {
     public void onBlockAdded(World world, int x, int y, int z) {
 		AtmosSystem atmos = AtmosSystem.getForWorld(world);
 		if (atmos!=null) {
-			atmos.stationBlockAdd(x,y,z);
+			atmos.stationBlockAdded(x,y,z);
 		}
 	}
 	@Override

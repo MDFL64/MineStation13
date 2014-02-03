@@ -3,6 +3,7 @@ package net.c0gg.ms13;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -16,13 +17,13 @@ import net.minecraft.world.World;
 
 public class AtmosSystem {
 	static private HashMap<World,AtmosSystem> atmosSystems=new HashMap<World,AtmosSystem>();
-	private HashMap<ChunkPosition,Zone> areaMap;
+	private HashMap<ChunkPosition,Zone> zoneMap;
 	private ArrayList<Zone> zones;
 	private World world;
 	
 	public AtmosSystem(World w) {
 		atmosSystems.put(w,this);
-		areaMap=new HashMap<ChunkPosition,Zone>();
+		zoneMap=new HashMap<ChunkPosition,Zone>();
 		zones=new ArrayList<Zone>();
 	}
 	
@@ -32,45 +33,42 @@ public class AtmosSystem {
 	
 	static public void updateAll() {
 		for (AtmosSystem atmos:atmosSystems.values()) {
-			ArrayList<Zone> deadZones= new ArrayList<Zone>();
-			for (Zone zone:atmos.zones) {
-				if (zone.update()) {
-					deadZones.add(zone);
-				}
-			}
-			for (Zone zone:deadZones) {
-				atmos.zones.remove(zone);
+			Iterator<Zone> iterZones = atmos.zones.iterator();
+			
+			while (iterZones.hasNext()) {
+				if (iterZones.next().update())
+					iterZones.remove();
 			}
 		}
 	}
 	
-	public void stationBlockAdd(int x, int y, int z) {
+	public void stationBlockAdded(int x, int y, int z) {
 		ChunkPosition p = new ChunkPosition(x,y,z);
-		Zone a = getZoneFromPosition(p);
-		if (a!=null) {
-			a.trySplit(p);
+		Zone zone = getZoneFromPosition(p);
+		if (zone!=null) {
+			zone.trySplit(p);
 		}
 	}
 	
 	public void stationBlockRemove(int x, int y, int z) {
-		ChunkPosition p = new ChunkPosition(x,y,z);
+		ChunkPosition pos = new ChunkPosition(x,y,z);
 		
-		ChunkPosition[] nearPositions = new ChunkPosition[] {new ChunkPosition(x+1,y,z),new ChunkPosition(x-1,y,z),new ChunkPosition(x,y+1,z),new ChunkPosition(x,y-1,z),new ChunkPosition(x,y,z+1),new ChunkPosition(x,y,z-1)};
+		ChunkPosition[] nearPositions = new ChunkPosition[] {
+				new ChunkPosition(x+1,y,z),
+				new ChunkPosition(x-1,y,z),
+				new ChunkPosition(x,y+1,z),
+				new ChunkPosition(x,y-1,z),
+				new ChunkPosition(x,y,z+1),
+				new ChunkPosition(x,y,z-1)
+		};
 		
 		for (ChunkPosition np:nearPositions) {
-			Zone a = getZoneFromPosition(np);
-			if (a!=null) {
-				a.tryExpand(p);
+			Zone zone = getZoneFromPosition(np);
+			if (zone!=null) {
+				zone.tryExpand(pos);
 				break;
 			}
 		}
-	}
-	
-	public void testPut(ChunkPosition pos) {
-		AtmosMix mix=new AtmosMix();
-		mix.gasAmounts[GasType.N2.ordinal()]=800;
-		mix.gasAmounts[GasType.O2.ordinal()]=200;
-		put(pos,mix);
 	}
 	
 	public void put(ChunkPosition pos,AtmosMix m) {
@@ -79,6 +77,13 @@ public class AtmosSystem {
 			zone = new Zone(pos);
 		}
 		zone.mix.add(m);
+	}
+	
+	public void testPut(ChunkPosition pos) {
+		AtmosMix mix=new AtmosMix();
+		mix.gasAmounts[GasType.N2.ordinal()]=800;
+		mix.gasAmounts[GasType.O2.ordinal()]=200;
+		put(pos,mix);
 	}
 	
 	public String testGet(ChunkPosition pos) {
@@ -95,11 +100,9 @@ public class AtmosSystem {
 	}
 	
 	private Zone getZoneFromPosition(ChunkPosition p) {
-		return areaMap.get(p);
+		return zoneMap.get(p);
 	}
 
-	//DONT TOUCH ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING
-	//Access modifiers don't seem to really work here, but they should give you an idea of what you should and shouldn't be calling.
 	private class Zone {
 		private HashSet<ChunkPosition> positions;
 		
@@ -123,9 +126,9 @@ public class AtmosSystem {
 		public Zone(HashSet<ChunkPosition> pSet) {
 			positions=pSet;
 			for (ChunkPosition p:pSet) {
-				Zone oldArea = areaMap.put(p,this);
-				if (oldArea!=null) {
-					oldArea.removePos(p);
+				Zone oldZone = zoneMap.put(p,this);
+				if (oldZone!=null) {
+					oldZone.removePos(p);
 				}
 			}
 			
@@ -139,7 +142,7 @@ public class AtmosSystem {
 			System.out.println("Atmos expand attempt.");
 		}
 		
-		//Use modified A* to determine if area needs splitting
+		//Use modified A* to determine if zone needs splitting
 		//THIS CODE IS FULL OF AIDS!
 		public void trySplit(ChunkPosition pSplit) {
 			removePos(pSplit);
@@ -171,11 +174,11 @@ public class AtmosSystem {
 				openSet.add(start);
 				
 				for (;;) {
-					//This would indicate that we filled an entire closed off section of the area.
+					//This would indicate that we filled an entire closed off section of the zone.
 					if (openSet.isEmpty()) {
 						//Push the goal back since we didn't reach it this time.
 						startingPositions.push(goal);
-						//Make a new area.
+						//Make a new zone.
 						newZones.add(closedSet);
 						break;
 					}
@@ -235,9 +238,9 @@ public class AtmosSystem {
 				}
 			}
 			
-			//Actually create new areas
+			//Actually create new zones
 			if (!newZones.isEmpty()) {
-				System.out.println("Atmos split. "+newZones.size()+" new areas.");
+				System.out.println("Atmos split. "+newZones.size()+" new zones.");
 				System.out.println("-	Starting: "+positions.size());
 				int i=0;
 				//HERE (the rest is stupid debug messages!)
@@ -263,12 +266,12 @@ public class AtmosSystem {
 				if (expansionStack.isEmpty()) return;
 				ChunkPosition p = expansionStack.pop();
 				
-				if (areaMap.containsKey(p)) {
-					Zone a = areaMap.get(p);
-					if (a==this) {
+				if (zoneMap.containsKey(p)) {
+					Zone zone = zoneMap.get(p);
+					if (zone==this) {
 						continue;
 					} else {
-						a.kill(this);
+						zone.kill(this);
 						continue;
 					}
 				}
@@ -291,7 +294,7 @@ public class AtmosSystem {
 				expansionStack.add(new ChunkPosition(p.x,p.y,p.z+1));
 				expansionStack.add(new ChunkPosition(p.x,p.y,p.z-1));
 				
-				//Check up/down so we can get to the top/bottom fast and kill the area if needed
+				//Check up/down so we can get to the top/bottom fast and kill the zone if needed
 				expansionStack.add(new ChunkPosition(p.x,p.y-1,p.z));
 				expansionStack.add(new ChunkPosition(p.x,p.y+1,p.z));
 			}
@@ -301,18 +304,17 @@ public class AtmosSystem {
 		
 		//Add position. This checks if the position is still owned and safely de-owns it.
 		private void addPos(ChunkPosition p) {
-			Zone oldArea = areaMap.put(p,this);
-			if (oldArea!=null) {
-				oldArea.removePos(p);
+			Zone oldZone = zoneMap.put(p,this);
+			if (oldZone!=null) {
+				oldZone.removePos(p);
 			}
 			positions.add(p);
 		}
 		
 		//Remove position. This double checks if we still technically own the position.
 		private void removePos(ChunkPosition p) {
-			if (areaMap.get(p)==this) {
-				areaMap.remove(p);
-			}
+			if (zoneMap.get(p)==this)
+				zoneMap.remove(p);
 			positions.remove(p);
 		}
 		
@@ -320,10 +322,11 @@ public class AtmosSystem {
 		private void kill() {
 			if (dead) return;
 			for (ChunkPosition p:positions) {
-				areaMap.remove(p);
+				if (zoneMap.get(p)==this)
+					zoneMap.remove(p);
 			}
 			dead=true;
-			System.out.println("Atmos area died.");
+			System.out.println("Atmos zone died.");
 		}
 		
 		//Merge
@@ -335,7 +338,7 @@ public class AtmosSystem {
 			}
 			other.mix.add(mix);
 			dead=true;
-			System.out.println("Atmos area merged.");
+			System.out.println("Atmos zone merged.");
 		}
 	}
 }
