@@ -2,6 +2,10 @@ package net.c0gg.ms13;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
@@ -25,6 +29,12 @@ public class PacketHandlerMinestation implements IPacketHandler {
 	enum Client2ServerSubtypes {
 		GRAB,AIRLOCKSETUP,HACK;
 	}
+	
+	enum Server2ClientSubtypes {
+		ATMOSDBG_START,ATMOSDBG_STOP,ATMOSDBG_SET,ATMOSDBG_SETMANY,ATMOSDBG_CLEAR,ATMOSDBG_CLEARZONE
+	}
+	
+	private static ArrayList<Player> debuggingPlayers= new ArrayList<Player>();
 	
 	public static void clSendPlyGrab(Entity grabEnt) {
 		ByteBuffer buffer=ByteBuffer.allocate(8);
@@ -88,6 +98,106 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		PacketDispatcher.sendPacketToServer(packet);
 	}
 	
+	public static void svSendAtmosDebugToggle(Player target) {
+		if (debuggingPlayers.remove(target)) {
+			ByteBuffer buffer=ByteBuffer.allocate(4);
+			
+			buffer.putInt(Server2ClientSubtypes.ATMOSDBG_STOP.ordinal());
+			
+			Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+			PacketDispatcher.sendPacketToPlayer(packet, target);
+		} else {
+			debuggingPlayers.add(target);
+			
+			ByteBuffer buffer=ByteBuffer.allocate(4);
+			
+			buffer.putInt(Server2ClientSubtypes.ATMOSDBG_START.ordinal());
+			
+			Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+			PacketDispatcher.sendPacketToPlayer(packet, target);
+			
+			AtmosSystem.sendDebugSetup(target);
+		}
+	}
+	
+	public static void svSendAtmosDebugSetPos(int zonehash,ChunkPosition pos) {
+		ByteBuffer buffer=ByteBuffer.allocate(20);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_SET.ordinal());
+		buffer.putInt(zonehash);
+		buffer.putInt(pos.x);
+		buffer.putInt(pos.y);
+		buffer.putInt(pos.z);
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		for (Player ply:debuggingPlayers) {
+			PacketDispatcher.sendPacketToPlayer(packet, ply);
+		}
+	}
+	
+	public static void svSendAtmosDebugSetMany(int zonehash,HashSet<ChunkPosition> positions) {
+		ByteBuffer buffer=ByteBuffer.allocate(12+positions.size()*12);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_SETMANY.ordinal());
+		buffer.putInt(zonehash);
+		buffer.putInt(positions.size());
+		
+		for (ChunkPosition pos:positions) {
+			buffer.putInt(pos.x);
+			buffer.putInt(pos.y);
+			buffer.putInt(pos.z);
+		}
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		for (Player ply:debuggingPlayers) {
+			PacketDispatcher.sendPacketToPlayer(packet, ply);
+		}
+	}
+	
+	//Best function name 2014
+	public static void svSendAtmosDebugSetManyUnicast(Player target, int zonehash,HashSet<ChunkPosition> positions) {
+		ByteBuffer buffer=ByteBuffer.allocate(12+positions.size()*12);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_SETMANY.ordinal());
+		buffer.putInt(zonehash);
+		buffer.putInt(positions.size());
+		
+		for (ChunkPosition pos:positions) {
+			buffer.putInt(pos.x);
+			buffer.putInt(pos.y);
+			buffer.putInt(pos.z);
+		}
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		PacketDispatcher.sendPacketToPlayer(packet, target);
+	}
+	
+	public static void svSendAtmosDebugClearPos(ChunkPosition pos) {
+		ByteBuffer buffer=ByteBuffer.allocate(16);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_CLEAR.ordinal());
+		buffer.putInt(pos.x);
+		buffer.putInt(pos.y);
+		buffer.putInt(pos.z);
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		for (Player ply:debuggingPlayers) {
+			PacketDispatcher.sendPacketToPlayer(packet, ply);
+		}
+	}
+	
+	public static void svSendAtmosDebugClearZone(int zonehash) {
+		ByteBuffer buffer=ByteBuffer.allocate(8);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_CLEARZONE.ordinal());
+		buffer.putInt(zonehash);
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		for (Player ply:debuggingPlayers) {
+			PacketDispatcher.sendPacketToPlayer(packet, ply);
+		}
+	}
+
 	@Override
 	public void onPacketData(INetworkManager manager,Packet250CustomPayload packet, Player player) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
@@ -97,7 +207,30 @@ public class PacketHandlerMinestation implements IPacketHandler {
 			int subtype = buffer.getInt();
 			
 			if (side == Side.CLIENT) {
-				
+				if (subtype==Server2ClientSubtypes.ATMOSDBG_START.ordinal()) {
+					System.out.println("ATMOS DEBUG START");
+					AtmosDebugger.start();
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_STOP.ordinal()) {
+					System.out.println("ATMOS DEBUG STOP");
+					AtmosDebugger.stop();
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_SET.ordinal()) {
+					int hash=buffer.getInt();
+					AtmosDebugger.map.put(new ChunkPosition(buffer.getInt(),buffer.getInt(),buffer.getInt()),hash);
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_SETMANY.ordinal()) {
+					int hash = buffer.getInt();
+					int count=buffer.getInt();
+					for (int i=0;i<count;i++)
+						AtmosDebugger.map.put(new ChunkPosition(buffer.getInt(),buffer.getInt(),buffer.getInt()),hash);
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_CLEAR.ordinal()) {
+					AtmosDebugger.map.remove(new ChunkPosition(buffer.getInt(),buffer.getInt(),buffer.getInt()));
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_CLEARZONE.ordinal()) {
+					int hash = buffer.getInt();
+					Iterator<Entry<ChunkPosition,Integer>> iterator = AtmosDebugger.map.entrySet().iterator();
+					while (iterator.hasNext()) {
+						if (iterator.next().getValue().intValue()==hash)
+							iterator.remove();
+					}
+				}
 			} else if (side == Side.SERVER) {
 				EntityPlayerMP entPlayer = ((EntityPlayerMP)player);
 				

@@ -10,7 +10,10 @@ import java.util.Stack;
 
 import com.google.common.collect.ArrayListMultimap;
 
+import cpw.mods.fml.common.network.Player;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -42,6 +45,15 @@ public class AtmosSystem {
 		}
 	}
 	
+	public static void sendDebugSetup(Player target) {
+		for (AtmosSystem atmos:atmosSystems.values()) {
+			for (Zone zone:atmos.zones) {
+				if (!zone.dead)
+					zone.sendDebugInfo(target);
+			}
+		}
+	}
+
 	public void stationBlockAdded(int x, int y, int z) {
 		ChunkPosition p = new ChunkPosition(x,y,z);
 		Zone zone = getZoneFromPosition(p);
@@ -122,6 +134,10 @@ public class AtmosSystem {
 			tryExpand(pos);
 		}
 
+		public void sendDebugInfo(Player target) {
+			PacketHandlerMinestation.svSendAtmosDebugSetManyUnicast(target,this.hashCode(), positions);
+		}
+
 		//Make a zone from a pre-determined set of positions. Does not automatically expand.
 		public Zone(HashSet<ChunkPosition> pSet) {
 			positions=pSet;
@@ -135,6 +151,8 @@ public class AtmosSystem {
 			expansionStack = new Stack<ChunkPosition>();
 			zones.add(this);
 			mix=new AtmosMix();
+			
+			PacketHandlerMinestation.svSendAtmosDebugSetMany(hashCode(), pSet);
 		}
 		
 		public void tryExpand(ChunkPosition p) {
@@ -244,18 +262,20 @@ public class AtmosSystem {
 				System.out.println("-	Starting: "+positions.size());
 				int i=0;
 				//HERE (the rest is stupid debug messages!)
-				for (HashSet<ChunkPosition> z:newZones) {
-					Zone newZone = new Zone(z);
-					newZone.mix.add(mix.split(z.size()));
-					System.out.println("-	"+i+++": "+z.size());
+				for (HashSet<ChunkPosition> posSet:newZones) {
+					Zone newZone = new Zone(posSet);
+					newZone.mix.add(mix.split(posSet.size()));
+					System.out.println("-	"+i+++": "+posSet.size());
 				}
 				System.out.println("-	Ending: "+positions.size());
 			}
 		}
 		
 		public boolean update() {
-			updateExpansion(3);
-			mix.setVolume(positions.size());
+			if (!dead) {
+				updateExpansion(3);
+				mix.setVolume(positions.size());
+			}
 			
 			return dead;
 		}
@@ -271,7 +291,7 @@ public class AtmosSystem {
 					if (zone==this) {
 						continue;
 					} else {
-						zone.kill(this);
+						zone.mergeInto(this);
 						continue;
 					}
 				}
@@ -309,12 +329,15 @@ public class AtmosSystem {
 				oldZone.removePos(p);
 			}
 			positions.add(p);
+			PacketHandlerMinestation.svSendAtmosDebugSetPos(hashCode(), p);
 		}
 		
 		//Remove position. This double checks if we still technically own the position.
 		private void removePos(ChunkPosition p) {
-			if (zoneMap.get(p)==this)
+			if (zoneMap.get(p)==this) {
 				zoneMap.remove(p);
+				PacketHandlerMinestation.svSendAtmosDebugClearPos(p);
+			}
 			positions.remove(p);
 		}
 		
@@ -327,10 +350,11 @@ public class AtmosSystem {
 			}
 			dead=true;
 			System.out.println("Atmos zone died.");
+			PacketHandlerMinestation.svSendAtmosDebugClearZone(hashCode());
 		}
 		
 		//Merge
-		private void kill(Zone other) {
+		private void mergeInto(Zone other) {
 			if (dead) return;
 			HashSet<ChunkPosition> pcopy = (HashSet<ChunkPosition>)positions.clone();
 			for (ChunkPosition p:pcopy) {
@@ -339,6 +363,7 @@ public class AtmosSystem {
 			other.mix.add(mix);
 			dead=true;
 			System.out.println("Atmos zone merged.");
+			PacketHandlerMinestation.svSendAtmosDebugSetMany(hashCode(), pcopy);
 		}
 	}
 }
