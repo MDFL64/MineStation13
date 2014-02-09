@@ -12,7 +12,7 @@ public class TickerAtmos implements ITickHandler {
 
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		AtmosSystem.updateAll();
+		AtmosZoner.updateAll();
 	}
 
 	@Override

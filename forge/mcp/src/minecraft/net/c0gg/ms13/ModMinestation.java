@@ -245,7 +245,7 @@ public class ModMinestation {
     	serverCmd.registerCommand(new CommandStructure());
     	
     	//Add atmos system for map
-    	new AtmosSystem(MinecraftServer.getServer().worldServerForDimension(dimensionIdAsteroid));
+    	new AtmosZoner(MinecraftServer.getServer().worldServerForDimension(dimensionIdAsteroid));
     }
     
     //TODO Should fancy names be stored in language files in future?
@@ -336,17 +336,17 @@ class CommandAtmos extends CommandBase {
 	public void processCommand(ICommandSender sender, String[] astring) {
 		if(sender instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer)sender;
-			AtmosSystem atmos = AtmosSystem.getForWorld(player.worldObj);
+			AtmosZoner atmos = AtmosZoner.getForWorld(player.worldObj);
 			if (astring.length>0&&atmos!=null) {
 				ChunkPosition pos = new ChunkPosition(player.getPosition(1));
 				if (astring[0].equals("put")) {
 					atmos.testPut(pos);
 				} else if (astring[0].equals("get")) {
 					player.addChatMessage(atmos.testGet(pos));
-				} else if (astring[0].equals("count")) {
-					player.addChatMessage(atmos.zoneCount()+" atmos areas active.");
 				} else if (astring[0].equals("debug")) {
 					PacketHandlerMinestation.svSendAtmosDebugToggle((Player)player);
+				} else {
+					player.addChatMessage("Function '"+astring[0]+"' does not exist. Valid functions are: put get debug");
 				}
 			}
 		}

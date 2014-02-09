@@ -31,7 +31,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 	}
 	
 	enum Server2ClientSubtypes {
-		ATMOSDBG_START,ATMOSDBG_STOP,ATMOSDBG_SET,ATMOSDBG_SETMANY,ATMOSDBG_CLEAR,ATMOSDBG_CLEARZONE
+		ATMOSDBG_START,ATMOSDBG_STOP,ATMOSDBG_SET,ATMOSDBG_SETMANY,ATMOSDBG_CLEAR,ATMOSDBG_CLEARZONE, ATMOSDBG_TRANSFER
 	}
 	
 	private static ArrayList<Player> debuggingPlayers= new ArrayList<Player>();
@@ -116,7 +116,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 			Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
 			PacketDispatcher.sendPacketToPlayer(packet, target);
 			
-			AtmosSystem.sendDebugSetup(target);
+			//AtmosSystem.sendDebugSetup(target);
 		}
 	}
 	
@@ -198,6 +198,19 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		}
 	}
 
+	public static void svSendAtmosDebugTransfer(int zonehash1, int zonehash2) {
+		ByteBuffer buffer=ByteBuffer.allocate(12);
+		
+		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_TRANSFER.ordinal());
+		buffer.putInt(zonehash1);
+		buffer.putInt(zonehash2);
+		
+		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
+		for (Player ply:debuggingPlayers) {
+			PacketDispatcher.sendPacketToPlayer(packet, ply);
+		}
+	}
+
 	@Override
 	public void onPacketData(INetworkManager manager,Packet250CustomPayload packet, Player player) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
@@ -229,6 +242,15 @@ public class PacketHandlerMinestation implements IPacketHandler {
 					while (iterator.hasNext()) {
 						if (iterator.next().getValue().intValue()==hash)
 							iterator.remove();
+					}
+				} else if (subtype==Server2ClientSubtypes.ATMOSDBG_TRANSFER.ordinal()) {
+					int hash1 = buffer.getInt();
+					int hash2 = buffer.getInt();
+					Iterator<Entry<ChunkPosition,Integer>> iterator = AtmosDebugger.map.entrySet().iterator();
+					while (iterator.hasNext()) {
+						Entry<ChunkPosition,Integer> entry= iterator.next();
+						if (entry.getValue().intValue()==hash1)
+							entry.setValue(hash2);
 					}
 				}
 			} else if (side == Side.SERVER) {
