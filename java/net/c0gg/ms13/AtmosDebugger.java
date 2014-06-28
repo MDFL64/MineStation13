@@ -8,13 +8,14 @@ import joptsimple.util.KeyValuePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class AtmosDebugger {
@@ -30,7 +31,7 @@ public class AtmosDebugger {
 		map.clear();
 	}
 	
-	@ForgeSubscribe
+	@SubscribeEvent
     public void onDraw(RenderWorldLastEvent event) {
 		Vec3 pos = Minecraft.getMinecraft().thePlayer.getPosition(0);
 		
@@ -42,9 +43,9 @@ public class AtmosDebugger {
 		
 		for (Entry<ChunkPosition, Integer> entry: map.entrySet()) {
 			int c=entry.getValue().intValue();
-			int mx=entry.getKey().x;
-			int my=entry.getKey().y;
-			int mz=entry.getKey().z;
+			int mx=entry.getKey().chunkPosX;
+			int my=entry.getKey().chunkPosY;
+			int mz=entry.getKey().chunkPosZ;
 			
 			GL11.glColor3ub((byte)((c>>16)&255),(byte)((c>>8)&255),(byte)(c&255));
 			GL11.glBegin(GL11.GL_LINES);

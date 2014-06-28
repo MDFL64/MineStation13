@@ -76,7 +76,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+//import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -85,7 +85,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid="ms13", name=ModMinestation.nameFancy, version="0")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false,channels={"ms13"},packetHandler=PacketHandlerMinestation.class)
+//@NetworkMod(clientSideRequired=true, serverSideRequired=false,channels={"ms13"},packetHandler=PacketHandlerMinestation.class)
 public class ModMinestation {
 	static final String nameFancy="MineStation13";
 	static final int baseGenIndex=240; //Keep generated blocks within the 1 byte limit. It might be cruddy, but it makes it easier to make the world generator work.
@@ -106,7 +106,7 @@ public class ModMinestation {
 	};
 	
 	static final Material materialStationMetal=new Material(MapColor.ironColor);
-	static final StepSound soundStationFootstep=new StepSoundMs("stationMetal",1,1);
+	static final StepSound soundStationFootstep=new StepSoundMs("stationMetal",1,1); //replaced with soundtype ???
 	
 	//Blocks
 	static final Block blockAsteroid=new BlockAsteroid(baseGenIndex);

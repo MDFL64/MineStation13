@@ -18,8 +18,11 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
 
+import net.c0gg.ms13.AtmosZoner.ZonerAccessor;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -39,25 +42,49 @@ public class AtmosZoner {
 	}
 	
 	private void update() {
-		Iterator<HotZone> iter = hotzones.iterator();
+		zones.addAll(newZones);
+		newZones.clear();
+		
+		Iterator<Zone> iter = zones.iterator();
+		
+		//Clean the zone list and clear forces
 		while (iter.hasNext()) {
-			HotZone zone = iter.next();
+			Zone zone = iter.next();
 			if (zone!=zone.getTheZone())
 				iter.remove();
 			else
-				zone.update(1);
+				zone.forces.clear();
+		}
+		
+		for (Zone zone:zones) {
+			if (zone instanceof HotZone)
+				((HotZone)zone).update(1);
+		}
+		
+		//Do them physics
+		for (Object obj:world.getLoadedEntityList()) {
+			Entity e = (Entity)obj;
+			Vec3 entPos=Vec3.fakePool.getVecFromPool(e.posX,e.posY,e.posZ);
+			Zone z = getZoneAt(new ChunkPosition(entPos));
+			if (z!=null) {
+				for (ForcePoint forcepoint:z.forces) {
+					Vec3 dir = forcepoint.pos.subtract(entPos).normalize();
+					System.out.println(dir.toString()+" "+forcepoint.force);
+					e.setVelocity(dir.xCoord*forcepoint.force, dir.yCoord*forcepoint.force, dir.zCoord*forcepoint.force);
+				}
+			}
 		}
 	}
 	
 	private World world;
 	private Hashtable<ChunkPosition, Zone> zoneMap;
-	private ArrayList<HotZone> hotzones;
+	private ArrayList<Zone> zones=new ArrayList<Zone>();
+	private ArrayList<Zone> newZones=new ArrayList<Zone>();
 	
 	public AtmosZoner(World world) {
 		zoners.put(world, this);
 		this.world=world;
 		zoneMap=new Hashtable<ChunkPosition,Zone>();
-		hotzones=new ArrayList<HotZone>();
 	}
 	
 	protected Zone getZoneAt(ChunkPosition pos) {
@@ -80,7 +107,7 @@ public class AtmosZoner {
 		for (ChunkPosition adjPos:getAdjacentPositions(pos)) {
 			Zone zone = getZoneAt(adjPos);
 			if (zone!=null) {
-				addHotZone(new HotZone(world,zoneMap,pos));
+				new HotZone(new ZonerAccessor(),pos);
 				break;
 			}
 		}
@@ -93,16 +120,10 @@ public class AtmosZoner {
 		}
 	}
 	
-	public void addHotZone(HotZone zone) {
-		hotzones.add(zone);
-	}
-	
 	public void testPut(ChunkPosition pos) {
 		Zone zone = getZoneAt(pos);
-		if (zone==null) {
-			zone = new HotZone(world,zoneMap,pos);
-			addHotZone((HotZone)zone);
-		}
+		if (zone==null)
+			zone = new HotZone(new ZonerAccessor(),pos);
 		zone.air.addAmount(GasType.O2, 900);
 		zone.air.addHeat(5000);
 	}
@@ -128,20 +149,35 @@ public class AtmosZoner {
 	
 	public static ChunkPosition[] getAdjacentPositions(ChunkPosition pos) {
 		return new ChunkPosition[] {
-			new ChunkPosition(pos.x+1,pos.y,pos.z),
-			new ChunkPosition(pos.x-1,pos.y,pos.z),
-			new ChunkPosition(pos.x,pos.y,pos.z+1),
-			new ChunkPosition(pos.x,pos.y,pos.z-1),
-			new ChunkPosition(pos.x,pos.y+1,pos.z),
-			new ChunkPosition(pos.x,pos.y-1,pos.z)
+			new ChunkPosition(pos.chunkPosX+1,pos.chunkPosY,pos.chunkPosZ),
+			new ChunkPosition(pos.chunkPosX-1,pos.chunkPosY,pos.chunkPosZ),
+			new ChunkPosition(pos.chunkPosX,pos.chunkPosY,pos.chunkPosZ+1),
+			new ChunkPosition(pos.chunkPosX,pos.chunkPosY,pos.chunkPosZ-1),
+			new ChunkPosition(pos.chunkPosX,pos.chunkPosY+1,pos.chunkPosZ),
+			new ChunkPosition(pos.chunkPosX,pos.chunkPosY-1,pos.chunkPosZ)
 		};
+	}
+	
+	public class ZonerAccessor {
+		private ZonerAccessor() {}
+		
+		public void addZone(Zone zone) {
+			newZones.add(zone);
+		}
+		public World getWorld() {
+			return world;
+		}
+		public Hashtable<ChunkPosition, Zone> getZoneMap() {
+			return zoneMap;
+		}
 	}
 }
 
 class Zone implements GasContainer {
-	protected Hashtable<ChunkPosition, Zone> zoneMap;
+	protected AtmosZoner.ZonerAccessor zonerAccess;
 	protected int volume;
 	public AtmosMix air;
+	public ArrayList<ForcePoint> forces=new ArrayList<ForcePoint>();
 	
 	/* This is a goofy system and I'm not really sure if it's good practice.
 	 * Each zone holds a self reference. Whenever a zone is destroyed, this reference is set to null.
@@ -151,9 +187,10 @@ class Zone implements GasContainer {
 
 	private Zone theZone;
 	
-	public Zone(Hashtable<ChunkPosition, Zone> zoneMap) {
+	public Zone(AtmosZoner.ZonerAccessor zonerAccess) {
 		theZone=this;
-		this.zoneMap=zoneMap;
+		this.zonerAccess=zonerAccess;
+		zonerAccess.addZone(this);
 	}
 	
 	//This is used for convoluted system detailed above.
@@ -171,7 +208,7 @@ class Zone implements GasContainer {
 			oldzone.volume--;
 		}
 		
-		zoneMap.put(pos, this);
+		zonerAccess.getZoneMap().put(pos, this);
 		volume++;
 		PacketHandlerMinestation.svSendAtmosDebugSetPos(this.hashCode(), pos);
 		return true;
@@ -180,7 +217,7 @@ class Zone implements GasContainer {
 	public void removePos(ChunkPosition pos) {
 		Zone oldzone = getZoneAt(pos);
 		if (oldzone==this) {
-			zoneMap.remove(pos);
+			zonerAccess.getZoneMap().remove(pos);
 			volume--;
 			PacketHandlerMinestation.svSendAtmosDebugClearPos(pos);
 		}
@@ -256,8 +293,8 @@ class Zone implements GasContainer {
 					
 					
 					//Compute cost using crud math
-					int sdx = start.x-ip.x;int sdy = start.y-ip.y;int sdz = start.z-ip.z;
-					int gdx = goal.x-ip.x;int gdy = goal.y-ip.y;int gdz = goal.z-ip.z;
+					int sdx = start.chunkPosX-ip.chunkPosX;int sdy = start.chunkPosY-ip.chunkPosY;int sdz = start.chunkPosZ-ip.chunkPosZ;
+					int gdx = goal.chunkPosX-ip.chunkPosX;int gdy = goal.chunkPosY-ip.chunkPosY;int gdz = goal.chunkPosZ-ip.chunkPosZ;
 					int cost = (sdx*sdx+sdy*sdy+sdz*sdz)+(gdx*gdx+gdy*gdy+gdz*gdz);
 					
 					if (sCost==-1) {
@@ -297,7 +334,7 @@ class Zone implements GasContainer {
 	//Internal type-specific method for doing the split based on a list of sets to turn into new zones
 	protected void doSplit(ArrayList<HashSet<ChunkPosition>> newZones) {
 		for (HashSet<ChunkPosition> posSet:newZones) {
-			Zone newZone = new Zone(zoneMap);
+			Zone newZone = new Zone(zonerAccess);
 			for (ChunkPosition pos:posSet)
 				newZone.addPos(pos);
 			newZone.air= air.take(newZone);
@@ -318,15 +355,15 @@ class Zone implements GasContainer {
 	}
 	
 	protected Zone getZoneAt(ChunkPosition pos) {
-		Zone zone = zoneMap.get(pos);
+		Zone zone = zonerAccess.getZoneMap().get(pos);
 		if (zone!=null) {
 			Zone zone2 = zone.getTheZone();
 				
 			if (zone!=zone2) {
 				if (zone2!=null)
-					zoneMap.put(pos, zone2);
+					zonerAccess.getZoneMap().put(pos, zone2);
 				else
-					zoneMap.remove(pos);
+					zonerAccess.getZoneMap().remove(pos);
 				zone=zone2;
 			}
 		}
@@ -342,20 +379,18 @@ class Zone implements GasContainer {
 //A 'Hot' zone is a zone that is still expanding. Normal zones will never expand.
 //They will decay into normal zones when finished expanding or merge with 'Cold' zones when pressures & temperatures equalize.
 class HotZone extends Zone {
-	private World world;
 	private Stack<ChunkPosition> expansionStack= new Stack<ChunkPosition>(); //Stack should contain only positions we own
 	private Hashtable<ChunkPosition,HashSet<Zone>> connectionPoints=new Hashtable<ChunkPosition,HashSet<Zone>>(); //Positions we own->cold zones next to them (Hot zones should automerge)
 	private ChunkPosition dissipatePos;
 	
-	public HotZone(World world, Hashtable<ChunkPosition, Zone> zoneMap ,ChunkPosition pos) {
-		this(world,zoneMap);
+	public HotZone(ZonerAccessor zonerAccess,ChunkPosition pos) {
+		super(zonerAccess);
 		addExpandPos(pos);
 		air=new AtmosMix(this);
 	}
 	
-	private HotZone(World world, Hashtable<ChunkPosition, Zone> zoneMap) {
-		super(zoneMap);
-		this.world=world;
+	private HotZone(ZonerAccessor zonerAccess) {
+		super(zonerAccess);
 	}
 	
 	public void addExpandPos(ChunkPosition pos) {
@@ -385,13 +420,14 @@ class HotZone extends Zone {
 					continue;
 				}
 				
-				Block b = Block.blocksList[world.getBlockId(neighbor.x, neighbor.y, neighbor.z)];
+				Block b = zonerAccess.getWorld().getBlock(neighbor.chunkPosX, neighbor.chunkPosY, neighbor.chunkPosZ);
+				
 				if (blockBlocksAtmos(b))
 					continue;
 				
 				addExpandPos(neighbor);
 				
-				if (neighbor.y>=255||neighbor.y<=0)
+				if (neighbor.chunkPosY>=255||neighbor.chunkPosY<=0)
 					dissipatePos=neighbor;
 			}
 			if (!connectedZones.isEmpty())
@@ -410,7 +446,7 @@ class HotZone extends Zone {
 		}
 		
 		//Part 2: Iterate through connected zones, removing invalid ones, and determining flow areas for each adjacent zone
-		Hashtable<Zone,Integer> flowAreas = new Hashtable<Zone,Integer>();
+		Hashtable<Zone,ForcePoint> flowAreas = new Hashtable<Zone,ForcePoint>();
 		Iterator<Entry<ChunkPosition,HashSet<Zone>>> iteratorStarts= connectionPoints.entrySet().iterator();
 		while (iteratorStarts.hasNext()) {
 			Entry<ChunkPosition,HashSet<Zone>> entryConnections = iteratorStarts.next();
@@ -425,13 +461,21 @@ class HotZone extends Zone {
 				Zone z = iteratorEnds.next().getTheZone();
 				if (z==null) {
 					iteratorEnds.remove();
-					//We should attempt to continue expansion there.
-					expansionStack.push(entryConnections.getKey());
+					//Attempt to expand into the removed zone
+					if (expansionStack.peek()!=entryConnections.getKey())
+						expansionStack.push(entryConnections.getKey());
 					continue;
 				}
 				
-				Integer oldval = flowAreas.get(z);
-				flowAreas.put(z,oldval!=null?oldval.intValue()+1:1);
+				//Forcepoints are used here to track the contact area of the connected zones and the average connection point
+				ForcePoint oldval = flowAreas.get(z);
+				ChunkPosition pos = entryConnections.getKey();
+				if (oldval!=null) {
+					oldval.force++;
+					oldval.pos.addVector(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ);
+				} else {
+					flowAreas.put(z,new ForcePoint(1,Vec3.fakePool.getVecFromPool(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ)));
+				}
 			}
 		}
 		
@@ -441,22 +485,32 @@ class HotZone extends Zone {
 			return;
 		}
 		
+		//Fix our average force positions
+		for (ForcePoint f:flowAreas.values()) {
+			f.pos.xCoord/=f.force;
+			f.pos.yCoord/=f.force;
+			f.pos.zCoord/=f.force;
+		}
+		
 		//Part 3: Flow calculations
 		boolean allEqualized= !flowAreas.isEmpty();
 		Zone currentZone=this;
-		for (Entry<Zone,Integer> flowEntry: flowAreas.entrySet()) {
-			if (air.flow(flowEntry.getKey().air, flowEntry.getValue())) {
+		for (Entry<Zone,ForcePoint> flowEntry: flowAreas.entrySet()) {
+			float flowForce=currentZone.air.flow(flowEntry.getKey().air, flowEntry.getValue().force);
+			if (flowForce!=flowForce) {
 				if (dissipatePos==null) {
 					currentZone.transferTo(flowEntry.getKey());
 					currentZone=flowEntry.getKey();
 				}
 			} else {
+				currentZone.forces.add(new ForcePoint(flowForce, flowEntry.getValue().pos));
+				flowEntry.getKey().forces.add(new ForcePoint(-flowForce, flowEntry.getValue().pos));
 				allEqualized=false;
 			}
 		}
 		if (dissipatePos!=null&&allEqualized) {
-			for (Entry<Zone,Integer> flowEntry: flowAreas.entrySet()) {
-				flowEntry.getKey().kill();
+			for (Zone zone: flowAreas.keySet()) {
+				zone.kill();
 			}
 			kill();
 		}
@@ -488,7 +542,7 @@ class HotZone extends Zone {
 	
 	//Replace with normal zone
 	private void decay() {
-		Zone zone= new Zone(zoneMap);
+		Zone zone= new Zone(zonerAccess);
 		zone.air=new AtmosMix(zone);
 		transferTo(zone);
 	}
@@ -500,7 +554,7 @@ class HotZone extends Zone {
 	//Internal type-specific method for doing the split based on a list of sets to turn into new zones
 	protected void doSplit(ArrayList<HashSet<ChunkPosition>> newZones) {
 		for (HashSet<ChunkPosition> posSet:newZones) {
-			HotZone newZone = new HotZone(world,zoneMap);
+			HotZone newZone = new HotZone(zonerAccess);
 			
 			for (ChunkPosition pos:posSet) {
 				newZone.addPos(pos);
@@ -517,7 +571,6 @@ class HotZone extends Zone {
 			}
 			newZone.air= air.take(newZone);
 			System.out.println("Split made zone with volume of "+posSet.size());
-			AtmosZoner.getForWorld(world).addHotZone(newZone);
 		}
 	}
 }
@@ -579,8 +632,8 @@ class AtmosMix {
 		return takenMix;
 	}
 	
-	public boolean flow(AtmosMix other,float area) {
-		float FLOWRATE=1;
+	public float flow(AtmosMix other,float area) {
+		float FLOWRATE=.25f;
 		float MERGE_THRESHOLD=.1f;
 		FLOWRATE*=area;
 		
@@ -606,10 +659,13 @@ class AtmosMix {
 		
 		if (merge) {
 			System.out.println("MERGE / PRESSURE: ("+getPressure()+","+other.getPressure()+") / TEMP: ("+getTemperatureC()+","+getTemperatureC()+")");
-			return true;
+			return Float.NaN;
 		}
 		
-		return false;
+		float flowForce=other.getPressure()-getPressure();
+		flowForce*=FLOWRATE*.002f;
+		
+		return flowForce;
 	}
 	
 	public void transferTo(AtmosMix other) {
@@ -653,4 +709,13 @@ class AtmosMix {
 			setAmount(g,gasAmounts[g.ordinal()]*multiplier);
 		}
 	}
+}
+
+class ForcePoint {
+	public ForcePoint(float force,Vec3 point) {
+		this.pos=point;
+		this.force=force;
+	}
+	public Vec3 pos;
+	public float force;
 }
