@@ -44,12 +44,13 @@ public class RenderBlockAirlockFrame implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
-		return false;
+	public int getRenderId() {
+		return ModMinestation.renderBlockAirlockFrameId;
 	}
 
 	@Override
-	public int getRenderId() {
-		return ModMinestation.renderBlockAirlockFrameId;
+	public boolean shouldRender3DInInventory(int modelId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

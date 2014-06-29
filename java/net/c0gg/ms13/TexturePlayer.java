@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.Resource;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -138,7 +138,7 @@ public class TexturePlayer {
 		InputStream inputstream = null;
 
         try {
-            Resource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(resourceName));
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(resourceName));
             inputstream = resource.getInputStream();
             BufferedImage img = ImageIO.read(inputstream);
             inputstream.close();

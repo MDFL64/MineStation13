@@ -10,8 +10,8 @@ import java.util.TimerTask;
 
 import paulscode.sound.FilenameURL;
 
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+//import cpw.mods.fml.common.ITickHandler;
+//import cpw.mods.fml.common.TickType;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,7 +24,7 @@ enum RoundState {
 	WORLD_GENERATED
 }
 
-public class RoundManager implements ITickHandler {
+public class RoundManager { // implements ITickHandler {
 	RoundState rs;
 	
 	public RoundManager() {
@@ -76,7 +76,7 @@ public class RoundManager implements ITickHandler {
 		}
 		dir.delete();
 	}
-
+	/*
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {}
 
@@ -94,5 +94,5 @@ public class RoundManager implements ITickHandler {
 	@Override
 	public String getLabel() {
 		return "Spacestation Round Manager";
-	}
+	}*/
 }

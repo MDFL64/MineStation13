@@ -50,7 +50,7 @@ public class RenderMob extends RendererLivingEntity {
             realY -= 0.125D;
         }
         
-        doRenderLiving(ply, x, realY, z, yaw, delta);
+        doRender(ply, x, realY, z, yaw, delta); //was doRenderLiving
         
         modelBiped.isSneak=false;
         modelBiped.heldItemLeft= modelBiped.heldItemRight= 0;

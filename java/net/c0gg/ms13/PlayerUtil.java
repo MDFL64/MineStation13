@@ -12,7 +12,7 @@ public class PlayerUtil {
 		Vec3 look = ply.getLook(1);
 		Vec3 endPos = startPos.addVector(look.xCoord*dist,look.yCoord*dist,look.zCoord*dist);
 		
-		return ply.worldObj.clip(startPos,endPos,true);
+		return ply.worldObj.rayTraceBlocks(startPos,endPos,true);
 	}
 	
 	public static boolean isInRange(EntityPlayerMP ply,ChunkPosition pos) {

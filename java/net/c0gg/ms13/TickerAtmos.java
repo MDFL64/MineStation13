@@ -2,20 +2,26 @@ package net.c0gg.ms13;
 
 import java.util.EnumSet;
 
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.common.gameevent.TickEvent.Type;
 
-public class TickerAtmos implements ITickHandler {
-	public TickerAtmos() {
+//import cpw.mods.fml.common.ITickHandler;
+//import cpw.mods.fml.common.TickType;
+
+public class TickerAtmos { //ONLY RUN ON SERVER PLEASE
+	/*public TickerAtmos() {
 		//TEEMO PLZ
+	}*/
+
+	@SubscribeEvent
+	public void onTick(TickEvent tick) {
+		if (tick.phase==Phase.START && tick.type==Type.WORLD)
+			AtmosZoner.updateAll();
 	}
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		AtmosZoner.updateAll();
-	}
-
-	@Override
+	/*@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
 		//LOL DICKS
 	}
@@ -28,5 +34,5 @@ public class TickerAtmos implements ITickHandler {
 	@Override
 	public String getLabel() {
 		return "Spacestation Atmos";
-	}
+	}*/
 }

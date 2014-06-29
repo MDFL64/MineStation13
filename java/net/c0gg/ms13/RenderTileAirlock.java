@@ -17,11 +17,11 @@ public class RenderTileAirlock extends TileEntitySpecialRenderer {
 	//This was hastily put together.. TODO fix
 	private void bindDoorTexture(String name) {
 		if (name=="internal") {
-			tileEntityRenderer.renderEngine.bindTexture(textureInternal);
+			bindTexture(textureInternal);
 		} else if (name=="external") {
-			tileEntityRenderer.renderEngine.bindTexture(textureExternal);
+			bindTexture(textureExternal);
 		} else if (name=="assembly") {
-			tileEntityRenderer.renderEngine.bindTexture(textureAssembly);
+			bindTexture(textureAssembly);
 		}
 	}
 	
@@ -121,7 +121,7 @@ public class RenderTileAirlock extends TileEntitySpecialRenderer {
 						GL11.glVertex3f(0,1-openFraction,.625f);
 					}
 				GL11.glEnd();
-				tileEntityRenderer.renderEngine.bindTexture(textureCommon);
+				bindTexture(textureCommon);
 				GL11.glBegin(GL11.GL_QUADS);
 					float offsetForPanel=0;
 					if (orientation) {
@@ -154,7 +154,7 @@ public class RenderTileAirlock extends TileEntitySpecialRenderer {
 				if (welded) {
 					offsetForWeld=.5f;
 				}
-				tileEntityRenderer.renderEngine.bindTexture(textureCommon);
+				bindTexture(textureCommon);
 				GL11.glBegin(GL11.GL_QUADS);
 					//Top Edge
 					GL11.glTexCoord2f(.5f,offsetForWeld);
