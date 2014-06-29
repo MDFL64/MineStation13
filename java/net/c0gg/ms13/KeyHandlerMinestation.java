@@ -16,20 +16,19 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
 
-public class KeyHandlerMinestation extends KeyHandler {
-	private static final KeyBinding[] keyBindings = {new KeyBinding("Grab",Keyboard.KEY_G)};
+public class KeyHandlerMinestation extends KeyHandler { //wat?
+	private static final KeyBinding[] keyBindings = {new KeyBinding("Grab",Keyboard.KEY_G, "key.minestation.teemo")}; //TODO:rename "teemo" ~Pdan
 	private static final boolean[] repeatings = {false};
-	
 	public KeyHandlerMinestation() {
 		super(keyBindings, repeatings);
 	}
 	
-	@Override
+	//@Override ~Pdan
 	public String getLabel() {
 		return "Minestation";
 	}
 
-	@Override
+	//@Override ~Pdan
 	public void keyDown(EnumSet<TickType> types,KeyBinding kb,boolean tickEnd, boolean isRepeat) {
 		if (tickEnd) return;
 		
@@ -39,14 +38,14 @@ public class KeyHandlerMinestation extends KeyHandler {
 		}
 	}
 
-	@Override
+	//@Override Damn mass yoloing up in here ~Pdan
 	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
 		if (tickEnd) return;
 		
 		
 	}
 
-	@Override
+	//@Override Damn mass yoloing up in here ~Pdan
 	public EnumSet<TickType> ticks() {
 		return EnumSet.of(TickType.CLIENT);
 	}

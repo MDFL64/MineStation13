@@ -34,10 +34,10 @@ public class ItemIdCard extends Item {
     {
 		NBTTagCompound nbt = itemStack.stackTagCompound;
 		if (nbt == null||!nbt.hasKey("idName")) {
-			return super.getItemDisplayName(itemStack);
+			return itemStack.getDisplayName(); //super.getItemDisplayName(itemStack);
 		}
 		
-		return nbt.getString("idName")+"'s "+super.getItemDisplayName(itemStack);
+		return nbt.getString("idName")+"'s "+ itemStack.getDisplayName(); //super.getItemDisplayName(itemStack);
     }
 	
 	@Override
@@ -50,10 +50,10 @@ public class ItemIdCard extends Item {
         
         ItemStack test = new ItemStack(par1, 1, 0);
         
-        test.setTagInfo("idName",new NBTTagString("","Gooby"));
+        test.setTagInfo("idName",new NBTTagString("Gooby")); //YOLO ~Pdan
         
         NBTTagList accessKeys = new NBTTagList();
-        accessKeys.appendTag(new NBTTagString("","teemo"));
+        accessKeys.appendTag(new NBTTagString("teemo")); //YOLO ~Pdan
         test.setTagInfo("idAccessKeys",accessKeys);
         
         par3List.add(test);

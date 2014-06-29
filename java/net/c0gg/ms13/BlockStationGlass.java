@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 public class BlockStationGlass extends BlockBreakable {
 	public BlockStationGlass() {
 		super(null,Material.glass,false); //YOLO ~Pdan
-		setHardness(5).setResistance(20).setStepSound(Block.soundGlassFootstep).setCreativeTab(ModMinestation.tabSpacestation);;
+		setHardness(5).setResistance(20).setStepSound(Block.soundTypeGlass).setCreativeTab(ModMinestation.tabSpacestation);;
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class BlockStationGlass extends BlockBreakable {
         return 0;
     }
 	
-	@Override
+	//@Override Yoooolooooo ~Pdan
 	public void registerIcons(IIconRegister iconregister)
     {
         this.blockIcon = iconregister.registerIcon(getTextureName());

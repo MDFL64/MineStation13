@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -63,8 +63,8 @@ public class MsInvSlot extends Slot {
 				//if (FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER) { this doesnt seem necessary...leaving it here in case it is needed for mp
 					ItemStack childstack = slot.getStack();
 					if (childstack!=null)
-						((MsInvInventory)inventory).player.dropPlayerItem(childstack);
-				//}
+						((MsInvInventory)inventory).player.dropItem(childstack.getItem(), childstack.stackSize); //~Pdan
+				//} 
 				slot.putStack(null);
 			}
 		}

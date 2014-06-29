@@ -76,6 +76,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 //import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -103,6 +104,12 @@ public class ModMinestation {
 		public ItemStack getIconItemStack() {
         	return new ItemStack(blockStationBlock,1,0);
         }
+
+		@Override //TODO TODO TODO TODO ACTUALLY FILL THIS SHIT IN!!! ~Pdan
+		public Item getTabIconItem() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	};
 	
 	static final Material materialStationMetal=new Material(MapColor.ironColor);
@@ -223,7 +230,7 @@ public class ModMinestation {
     	MinecraftForge.EVENT_BUS.register(this);
     }
     
-    @ForgeSubscribe
+    @SubscribeEvent
     public void loadSounds(SoundLoadEvent event) {
     	//These sounds are pretty terrible...I was originally stealing stuff from HL2 but then decided it would be
     	//a good idea not to commit that so I made my own placeholders.
@@ -271,7 +278,7 @@ public class ModMinestation {
     	GameRegistry.registerItem(i,i.getUnlocalizedName());
     }
     
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onEntJoined(EntityJoinWorldEvent event) {
     	if (event.entity instanceof EntityPlayer) {
     		EntityPlayer ply = (EntityPlayer)event.entity;
@@ -282,13 +289,13 @@ public class ModMinestation {
     	}
     }
     
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onEntDamaged(LivingHurtEvent event) {
     	event.setCanceled(true);
     	DamageManager.applyDamage(event.source,event.ammount);
     }
     
-    /*@ForgeSubscribe //something should probably be done with this later...
+    /*@SubscribeEvent //something should probably be done with this later...
     public void onDrawHotbar(RenderGameOverlayEvent event) {
     	if (event.type==ElementType.HOTBAR && event.isCancelable()) { //Only PRE events are can be canceled.
     		event.setCanceled(true);
@@ -344,7 +351,7 @@ class CommandAtmos extends CommandBase {
 				} else if (astring[0].equals("get")) {
 					player.addChatMessage(atmos.testGet(pos));
 				} else if (astring[0].equals("debug")) {
-					PacketHandlerMinestation.svSendAtmosDebugToggle((Player)player);
+					PacketHandlerMinestation.svSendAtmosDebugToggle((EntityPlayer)player); //Yolo ~Pdan
 				} else {
 					player.addChatMessage("Function '"+astring[0]+"' does not exist. Valid functions are: put get debug");
 				}

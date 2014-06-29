@@ -20,7 +20,7 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
 	
 	public BlockFloorTile(int par1) {
 		super(Material.rock);
-		setBlockUnbreakable().setResistance(3).setStepSound(soundStoneFootstep);
+		setBlockUnbreakable().setResistance(3).setStepSound(Block.soundTypeStone);
 		
 		setBlockBounds(0,.8f,0,1,1,1);
         setCreativeTab(ModMinestation.tabSpacestation);

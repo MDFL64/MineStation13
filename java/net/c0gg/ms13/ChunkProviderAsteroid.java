@@ -135,7 +135,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     {
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, par1, par2, par3ArrayOfByte, par4ArrayOfBiomeGenBase);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Result.DENY) return;
+        if (event.getResult() == Result.DENY) return; 
 
         for (int k = 0; k < 16; ++k)
         {
@@ -143,7 +143,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
             {
                 byte b0 = 1;
                 int i1 = -1;
-                byte b1 = (byte)Block.whiteStone.blockID;
+                byte b1 = (byte)Block.whiteStone.blockID; //Wat? ~Pdan
                 byte b2 = (byte)Block.whiteStone.blockID;
 
                 for (int j1 = 127; j1 >= 0; --j1)

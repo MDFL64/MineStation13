@@ -30,7 +30,7 @@ public class GuiAirlockSetup extends GuiScreen {
 		guiLeft = (this.width - this.xSize) / 2;
         guiTop = (this.height - this.ySize) / 2;
         
-        inputField = new GuiTextField(fontRenderer, guiLeft,guiTop+20, xSize, 12);
+        inputField = new GuiTextField(fontRendererObj, guiLeft,guiTop+20, xSize, 12);
         inputField.setFocused(true);
         inputField.setCanLoseFocus(false);
 	}
@@ -78,8 +78,8 @@ public class GuiAirlockSetup extends GuiScreen {
         drawDefaultBackground();
     	super.drawScreen(par1, par2, par3); //this draws buttons, if we have any
         //GL11.glDisable(GL11.GL_LIGHTING);
-    	
-        fontRenderer.drawString(StatCollector.translateToLocal("container.airlocksetup"), guiLeft+15, guiTop+5, 0xFFFFFF);
+    	//YOLO fontRenderer ~Pdan
+        fontRendererObj.drawString(StatCollector.translateToLocal("container.airlocksetup"), guiLeft+15, guiTop+5, 0xFFFFFF);
         inputField.drawTextBox();
     }
 	

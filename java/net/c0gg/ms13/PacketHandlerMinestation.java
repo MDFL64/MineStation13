@@ -34,7 +34,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		ATMOSDBG_START,ATMOSDBG_STOP,ATMOSDBG_SET,ATMOSDBG_SETMANY,ATMOSDBG_CLEAR,ATMOSDBG_CLEARZONE, ATMOSDBG_TRANSFER
 	}
 	
-	private static ArrayList<Player> debuggingPlayers= new ArrayList<Player>();
+	private static ArrayList<EntityPlayer> debuggingPlayers= new ArrayList<EntityPlayer>(); //SWAGYOLO ~Pdan
 	
 	public static void clSendPlyGrab(Entity grabEnt) {
 		ByteBuffer buffer=ByteBuffer.allocate(8);
@@ -98,7 +98,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		PacketDispatcher.sendPacketToServer(packet);
 	}
 	
-	public static void svSendAtmosDebugToggle(Player target) {
+	public static void svSendAtmosDebugToggle(EntityPlayer target) { //Megayolo ~Pdan
 		if (debuggingPlayers.remove(target)) {
 			ByteBuffer buffer=ByteBuffer.allocate(4);
 			
@@ -130,7 +130,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(pos.chunkPosZ);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
-		for (Player ply:debuggingPlayers) {
+		for (EntityPlayer ply:debuggingPlayers) {
 			PacketDispatcher.sendPacketToPlayer(packet, ply);
 		}
 	}
@@ -149,13 +149,13 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		}
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
-		for (Player ply:debuggingPlayers) {
+		for (EntityPlayer ply:debuggingPlayers) {
 			PacketDispatcher.sendPacketToPlayer(packet, ply);
 		}
 	}
 	
 	//Best function name 2014
-	public static void svSendAtmosDebugSetManyUnicast(Player target, int zonehash,HashSet<ChunkPosition> positions) {
+	public static void svSendAtmosDebugSetManyUnicast(EntityPlayer target, int zonehash,HashSet<ChunkPosition> positions) {
 		ByteBuffer buffer=ByteBuffer.allocate(12+positions.size()*12);
 		
 		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_SETMANY.ordinal());
@@ -181,7 +181,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(pos.chunkPosZ);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
-		for (Player ply:debuggingPlayers) {
+		for (EntityPlayer ply:debuggingPlayers) {
 			PacketDispatcher.sendPacketToPlayer(packet, ply);
 		}
 	}
@@ -193,7 +193,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(zonehash);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
-		for (Player ply:debuggingPlayers) {
+		for (EntityPlayer ply:debuggingPlayers) {
 			PacketDispatcher.sendPacketToPlayer(packet, ply);
 		}
 	}
@@ -206,13 +206,13 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(zonehash2);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
-		for (Player ply:debuggingPlayers) {
+		for (EntityPlayer ply:debuggingPlayers) {
 			PacketDispatcher.sendPacketToPlayer(packet, ply);
 		}
 	}
 
 	@Override
-	public void onPacketData(INetworkManager manager,Packet250CustomPayload packet, Player player) {
+	public void onPacketData(INetworkManager manager,Packet250CustomPayload packet, EntityPlayer player) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		
 		try { //I don't trust people to send the right shit.
@@ -301,7 +301,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 						int y = buffer.getInt();
 						int z = buffer.getInt();
 						
-						TileEntity ent = world.getBlockTileEntity(x, y, z);
+						TileEntity ent = world.getTileEntity(x, y, z);
 						
 						if (ent!=null&&ent instanceof Hackable&&PlayerUtil.isInRange(entPlayer,new ChunkPosition(ent.xCoord,ent.yCoord,ent.zCoord))) {
 							hackable = (Hackable)ent;
@@ -338,7 +338,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Warning! Error reading packet from "+((EntityPlayer)player).username+": "+e.getMessage());
+			System.out.println("Warning! Error reading packet from "+((EntityPlayer)player).getDisplayName()+": "+e.getMessage());
 		}
 	}
 }

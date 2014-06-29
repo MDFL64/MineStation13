@@ -9,13 +9,13 @@ public class StepSoundMs extends StepSound {
 		super(par1Str, par2, par3);
 	}
 	
-	@Override
+	//@Override ~Pdan
 	public String getBreakSound()
     {
         return "ms13:"+super.getBreakSound();
     }
 
-    @Override
+   // @Override ~Pdan
     public String getStepSound()
     {
         return "ms13:"+super.getStepSound();
