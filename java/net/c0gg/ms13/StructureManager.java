@@ -15,6 +15,7 @@ import java.util.Queue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
@@ -35,38 +36,38 @@ public class StructureManager {
 		
 		int minx,maxx,miny,maxy,minz,maxz;
 		
-		minx=maxx=seedpos.x;miny=maxy=seedpos.y;minz=maxz=seedpos.z;
+		minx=maxx=seedpos.chunkPosX;miny=maxy=seedpos.chunkPosY;minz=maxz=seedpos.chunkPosZ;
 		
 		while (!openPositions.isEmpty()) {
 			ChunkPosition curPos = openPositions.poll();
-			if (world.getBlockId(curPos.x, curPos.y, curPos.z)!=0&&!closedPositions.contains(curPos)) {
+			if (world.getBlock(curPos.chunkPosX, curPos.chunkPosY, curPos.chunkPosZ)!=Blocks.air&&!closedPositions.contains(curPos)) {
 				closedPositions.add(curPos);
 				
-				openPositions.add(new ChunkPosition(curPos.x+1, curPos.y, curPos.z));
-				openPositions.add(new ChunkPosition(curPos.x-1, curPos.y, curPos.z));
-				openPositions.add(new ChunkPosition(curPos.x, curPos.y+1, curPos.z));
-				openPositions.add(new ChunkPosition(curPos.x, curPos.y-1, curPos.z));
-				openPositions.add(new ChunkPosition(curPos.x, curPos.y, curPos.z+1));
-				openPositions.add(new ChunkPosition(curPos.x, curPos.y, curPos.z-1));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX+1, curPos.chunkPosY, curPos.chunkPosZ));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX-1, curPos.chunkPosY, curPos.chunkPosZ));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX, curPos.chunkPosY+1, curPos.chunkPosZ));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX, curPos.chunkPosY-1, curPos.chunkPosZ));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX, curPos.chunkPosY, curPos.chunkPosZ+1));
+				openPositions.add(new ChunkPosition(curPos.chunkPosX, curPos.chunkPosY, curPos.chunkPosZ-1));
 				
-				if (curPos.x<minx) {
-					minx=curPos.x;
+				if (curPos.chunkPosX<minx) {
+					minx=curPos.chunkPosX;
 				}
-				if (curPos.y<miny) {
-					miny=curPos.y;
+				if (curPos.chunkPosY<miny) {
+					miny=curPos.chunkPosY;
 				}
-				if (curPos.z<minz) {
-					minz=curPos.z;
+				if (curPos.chunkPosZ<minz) {
+					minz=curPos.chunkPosZ;
 				}
 				
-				if (curPos.x>maxx) {
-					maxx=curPos.x;
+				if (curPos.chunkPosX>maxx) {
+					maxx=curPos.chunkPosX;
 				}
-				if (curPos.y>maxy) {
-					maxy=curPos.y;
+				if (curPos.chunkPosY>maxy) {
+					maxy=curPos.chunkPosY;
 				}
-				if (curPos.z>maxz) {
-					maxz=curPos.z;
+				if (curPos.chunkPosZ>maxz) {
+					maxz=curPos.chunkPosZ;
 				}
 			}
 		}
@@ -89,7 +90,7 @@ public class StructureManager {
 			for (int ix=minx;ix<=maxx;ix++) {
 				for (int iy=miny;iy<=maxy;iy++) {
 					for (int iz=minz;iz<=maxz;iz++) {
-						dataStream.writeShort(world.getBlockId(ix,iy,iz));
+						dataStream.writeShort(world.getBlock(ix,iy,iz));
 						dataStream.writeByte(world.getBlockMetadata(ix,iy,iz));
 						
 						TileEntity tileEnt = world.getBlockTileEntity(ix,iy,iz);
@@ -177,7 +178,7 @@ public class StructureManager {
 					for (int iz=0;iz<sizez;iz++) {
 						int id = dataStream.readShort();
 						int meta = dataStream.readByte();
-						world.setBlock(basePos.x+ix, basePos.y+iy, basePos.z+iz, id, meta, 2);
+						world.setBlock(basePos.chunkPosX+ix, basePos.chunkPosY+iy, basePos.chunkPosZ+iz, id, meta, 2);
 					}
 				}
 			}
@@ -185,9 +186,9 @@ public class StructureManager {
 			int numTileEnts = dataStream.readInt();
 			for (int i=0;i<numTileEnts;i++) {
 				NBTTagCompound nbt = (NBTTagCompound)NBTBase.readNamedTag(dataStream);
-				int px=nbt.getInteger("x")+basePos.x;
-				int py=nbt.getInteger("y")+basePos.y;
-				int pz=nbt.getInteger("z")+basePos.z;
+				int px=nbt.getInteger("x")+basePos.chunkPosX;
+				int py=nbt.getInteger("y")+basePos.chunkPosY;
+				int pz=nbt.getInteger("z")+basePos.chunkPosZ;
 				
 				nbt.setInteger("x",px);
 				nbt.setInteger("y",py);
@@ -206,9 +207,9 @@ public class StructureManager {
 				NBTTagDouble posx = (NBTTagDouble)pos.tagAt(0);
 				NBTTagDouble posy = (NBTTagDouble)pos.tagAt(1);
 				NBTTagDouble posz = (NBTTagDouble)pos.tagAt(2);
-				posx.data=posx.data+basePos.x;
-				posy.data=posy.data+basePos.y;
-				posz.data=posz.data+basePos.z;
+				posx.data=posx.data+basePos.chunkPosX;
+				posy.data=posy.data+basePos.chunkPosY;
+				posz.data=posz.data+basePos.chunkPosZ;
 				
 				entstoload.add(EntityList.createEntityFromNBT(nbt,world));
 			}

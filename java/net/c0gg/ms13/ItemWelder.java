@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 public class ItemWelder extends Item {
 	public ItemWelder(int id) {
-		super(id);
+//		super(id);
 		
 		setMaxStackSize(1);
 		setCreativeTab(ModMinestation.tabSpacestation);
@@ -17,7 +17,7 @@ public class ItemWelder extends Item {
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int dir, float lx, float ly, float lz)
     {
-		Block block = Block.blocksList[world.getBlockId(x,y,z)];
+		Block block = world.getBlock(x,y,z);
         
         if (block instanceof ToolableWelder) {
         	((ToolableWelder)block).onUseWelder(world, x, y, z, dir);

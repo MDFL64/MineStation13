@@ -125,9 +125,9 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		
 		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_SET.ordinal());
 		buffer.putInt(zonehash);
-		buffer.putInt(pos.x);
-		buffer.putInt(pos.y);
-		buffer.putInt(pos.z);
+		buffer.putInt(pos.chunkPosX);
+		buffer.putInt(pos.chunkPosY);
+		buffer.putInt(pos.chunkPosZ);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
 		for (Player ply:debuggingPlayers) {
@@ -143,9 +143,9 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(positions.size());
 		
 		for (ChunkPosition pos:positions) {
-			buffer.putInt(pos.x);
-			buffer.putInt(pos.y);
-			buffer.putInt(pos.z);
+			buffer.putInt(pos.chunkPosX);
+			buffer.putInt(pos.chunkPosY);
+			buffer.putInt(pos.chunkPosZ);
 		}
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
@@ -163,9 +163,9 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		buffer.putInt(positions.size());
 		
 		for (ChunkPosition pos:positions) {
-			buffer.putInt(pos.x);
-			buffer.putInt(pos.y);
-			buffer.putInt(pos.z);
+			buffer.putInt(pos.chunkPosX);
+			buffer.putInt(pos.chunkPosY);
+			buffer.putInt(pos.chunkPosZ);
 		}
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
@@ -176,9 +176,9 @@ public class PacketHandlerMinestation implements IPacketHandler {
 		ByteBuffer buffer=ByteBuffer.allocate(16);
 		
 		buffer.putInt(Server2ClientSubtypes.ATMOSDBG_CLEAR.ordinal());
-		buffer.putInt(pos.x);
-		buffer.putInt(pos.y);
-		buffer.putInt(pos.z);
+		buffer.putInt(pos.chunkPosX);
+		buffer.putInt(pos.chunkPosY);
+		buffer.putInt(pos.chunkPosZ);
 		
 		Packet250CustomPayload packet=new Packet250CustomPayload("ms13", buffer.array());
 		for (Player ply:debuggingPlayers) {
@@ -317,7 +317,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 						
 						if (action<8) {
 							boolean cut = (wires & (1<<action)) ==0;
-							if (cut?entPlayer.inventory.hasItem(ModMinestation.itemWireCutters.itemID):entPlayer.inventory.hasItem(ModMinestation.itemSolderGun.itemID)) {
+							if (cut?entPlayer.inventory.hasItem(ModMinestation.itemWireCutters):entPlayer.inventory.hasItem(ModMinestation.itemSolderGun)) {
 								hackable.setWires((byte)(wires^(1<<action)));
 								byte function = hackable.getGroup().getFunction(action);
 								if (cut) {
@@ -329,7 +329,7 @@ public class PacketHandlerMinestation implements IPacketHandler {
 						} else if (action<16) {
 							action-=8;
 							boolean cut = (wires & (1<<action)) ==0;
-							if (entPlayer.inventory.hasItem(ModMinestation.itemMultitool.itemID)&&cut) {
+							if (entPlayer.inventory.hasItem(ModMinestation.itemMultitool)&&cut) {
 								byte function = hackable.getGroup().getFunction((byte)(action));
 								hackable.functionPulsed(function);
 							}

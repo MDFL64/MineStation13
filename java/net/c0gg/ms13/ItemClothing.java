@@ -17,7 +17,7 @@ public abstract class ItemClothing extends net.minecraft.item.Item {
 	protected static final BufferedImage imgBoots= TexturePlayer.loadImage("ms13:textures/mob/boots_generic.png");
 	
 	public ItemClothing(int par1) {
-		super(par1);
+//		super(par1);
 		setMaxStackSize(1);
 		setCreativeTab(ModMinestation.tabSpacestation);
 	}
@@ -35,8 +35,8 @@ public abstract class ItemClothing extends net.minecraft.item.Item {
 	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-		par1ItemStack.setTagInfo("clothingColor", new NBTTagInt(null,(int)(Math.random()*0xFFFFFF)));
-		
+		par1ItemStack.setTagInfo("clothingColor", new NBTTagInt((int)(Math.random()*0xFFFFFF)));
+	
 		return par1ItemStack;
     }
 	

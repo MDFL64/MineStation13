@@ -277,13 +277,13 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 		ArrayList<ChunkPosition> positions = getAllBlocks();
 		boolean open=getClosed();
 		for (ChunkPosition pos:positions) {
-			int meta = worldObj.getBlockMetadata(pos.x, pos.y, pos.z);
+			int meta = worldObj.getBlockMetadata(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ);
 			if (open) {
 				meta &=7;
 			} else {
 				meta |=8;
 			}
-			worldObj.setBlockMetadataWithNotify(pos.x, pos.y, pos.z,meta,2); //setBlock(pos.x, pos.y, pos.z,ModSpaceStation.blockAirlockFrame.blockID,meta,2);
+			worldObj.setBlockMetadataWithNotify(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ,meta,2); //setBlock(pos.x, pos.y, pos.chunkPosZ,ModSpaceStation.blockAirlockFrame.blockID,meta,2);
 		}
 	}
 

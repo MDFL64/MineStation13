@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class BlockStationFree extends Block implements ToolableWelder {
 	public BlockStationFree(int par1) {
-		super(par1,ModMinestation.materialStationMetal);
+		super(ModMinestation.materialStationMetal);
 		setCreativeTab(ModMinestation.tabSpacestation);
 	}
 	
