@@ -3,20 +3,19 @@ package net.c0gg.ms13;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.sound.midi.Transmitter;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 
@@ -47,7 +46,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 		} else {
 			flags &= ~(1<<flag.ordinal());
 		}
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,2,flags);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags);
 	}
 	
 	public boolean getFlag(AirlockFlag flag) {
@@ -57,7 +56,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	public void toggleFlag(AirlockFlag flag) {
 		if (worldObj.isRemote) return;
 		flags ^= (1<<flag.ordinal());
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,2,flags);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags);
 	}
 	
 	public TileEntityAirlock() {
@@ -112,9 +111,9 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	}
 	
 	@Override
-	public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z)
+	public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z)
     {
-        return newID!=ModMinestation.blockAirlockFrame.blockID;
+        return newBlock!=ModMinestation.blockAirlockFrame;
     }
 	
 	public float getOpenFraction() {
@@ -125,13 +124,13 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		return (meta&8)==8;
 	}
-	
+	/* TODO see if we should have commented this out
 	@Override
 	public Packet getDescriptionPacket() {
         NBTTagCompound nbt = new NBTTagCompound();
         writeToNBT(nbt);
-        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 0, nbt);
-    }
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, nbt);
+    }*/
 	
 	@Override
 	public boolean receiveClientEvent(int id, int param)
@@ -164,10 +163,10 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 		return false;
     }
 	
-	@Override
-	public void onDataPacket(INetworkManager netManager,Packet132TileEntityData  packet) {
-		readFromNBT(packet.data);
-	}
+	/*@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+		readFromNBT(packet.);
+	}*/
 	
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
@@ -209,7 +208,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	}
 	
 	private void sendIndicator(int n) {
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,4,n);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,4,n);
 	}
 	
 	@Override
@@ -238,14 +237,14 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 			if (typeA==0) {
 				if (worldObj.isRemote) return true;
 				typeA=type.ordinal();
-				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,0,typeA);
+				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,0,typeA);
 				return true;
 			}
 		} else {
 			if (typeB==0) {
 				if (worldObj.isRemote) return true;
 				typeB=type.ordinal();
-				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,1,typeB);
+				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,1,typeB);
 				return true;
 			}
 		}
@@ -265,7 +264,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 				toggleOpen();
 				sendIndicator(0);
 		} else {
-			ply.addChatMessage("This airlock requires the access key '"+key+"'.");
+			ply.addChatMessage(new ChatComponentText("This airlock requires the access key '"+key+"'."));
 			sendIndicator(2);
 		}
 	}
@@ -369,7 +368,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	@Override
 	public void setWires(byte wires) {
 		hackwires=wires;
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame.blockID,3,hackwires);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,3,hackwires);
 	}
 
 	@Override

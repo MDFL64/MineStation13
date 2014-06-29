@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
 
-import net.c0gg.ms13.AtmosZoner.chunkPosZonerAccessor;
+import net.c0gg.ms13.AtmosZoner.ZonerAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
@@ -26,7 +26,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.event.entity.living.chunkPosZombieEvent;
+
 
 public class AtmosZoner {
 	static private Hashtable<World,AtmosZoner> zoners=new Hashtable<World,AtmosZoner>();
@@ -174,7 +174,7 @@ public class AtmosZoner {
 }
 
 class Zone implements GasContainer {
-	protected AtmosZoner.chunkPosZonerAccessor zonerAccess;
+	protected AtmosZoner.ZonerAccessor zonerAccess;
 	protected int volume;
 	public AtmosMix air;
 	public ArrayList<ForcePoint> forces=new ArrayList<ForcePoint>();
@@ -187,7 +187,7 @@ class Zone implements GasContainer {
 
 	private Zone theZone;
 	
-	public Zone(AtmosZoner.zonerAccessor zonerAccess) {
+	public Zone(AtmosZoner.ZonerAccessor zonerAccess) {
 		theZone=this;
 		this.zonerAccess=zonerAccess;
 		zonerAccess.addZone(this);

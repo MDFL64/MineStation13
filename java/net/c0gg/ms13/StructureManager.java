@@ -1,6 +1,8 @@
 package net.c0gg.ms13;
 
+import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,10 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
@@ -88,12 +92,12 @@ public class StructureManager {
 			
 			ArrayList<NBTBase> tileEnts= new ArrayList<NBTBase>();
 			for (int ix=minx;ix<=maxx;ix++) {
-				for (int iy=miny;iy<=maxy;iy++) {
+				for (int iy=miny;iy<=maxy;iy++) { //TODO update to deal with new block/id system
 					for (int iz=minz;iz<=maxz;iz++) {
-						dataStream.writeShort(world.getBlock(ix,iy,iz));
+						dataStream.writeShort(Block.getIdFromBlock(world.getBlock(ix,iy,iz)));
 						dataStream.writeByte(world.getBlockMetadata(ix,iy,iz));
 						
-						TileEntity tileEnt = world.getBlockTileEntity(ix,iy,iz);
+						TileEntity tileEnt = world.getTileEntity(ix,iy,iz);
 						if (tileEnt!=null) {
 							NBTTagCompound nbt=new NBTTagCompound();
 							tileEnt.writeToNBT(nbt);
@@ -111,7 +115,7 @@ public class StructureManager {
 			//Part 2: Tile Ents
 			dataStream.writeInt(tileEnts.size());
 			for (NBTBase nbt:tileEnts) {
-				NBTBase.writeNamedTag(nbt,dataStream);
+				CompressedStreamTools.write((NBTTagCompound)nbt,(DataOutput)dataStream); //TODO bad cast?
 			}
 			
 			//Part 3: Ents
@@ -135,15 +139,13 @@ public class StructureManager {
 					nbt.removeTag("UUIDLeast");
 					
 					//Localize position
-					NBTTagList pos = nbt.getTagList("Pos");
-					NBTTagDouble posx = (NBTTagDouble)pos.tagAt(0);
-					NBTTagDouble posy = (NBTTagDouble)pos.tagAt(1);
-					NBTTagDouble posz = (NBTTagDouble)pos.tagAt(2);
-					posx.data=posx.data-minx;
-					posy.data=posy.data-miny;
-					posz.data=posz.data-minz;
-					
-					NBTBase.writeNamedTag(nbt,dataStream);
+					NBTTagList pos = new NBTTagList();
+					pos.appendTag(new NBTTagDouble(ent.posX-minx));
+					pos.appendTag(new NBTTagDouble(ent.posY-miny));
+					pos.appendTag(new NBTTagDouble(ent.posZ-minz));
+					nbt.setTag("pos",pos);
+
+					CompressedStreamTools.write((NBTTagCompound)nbt,(DataOutput)dataStream);
 				}
 			}
 			
@@ -177,15 +179,16 @@ public class StructureManager {
 				for (int iy=0;iy<sizey;iy++) {
 					for (int iz=0;iz<sizez;iz++) {
 						int id = dataStream.readShort();
+						Block block = (Block)Block.blockRegistry.getObjectById(id);
 						int meta = dataStream.readByte();
-						world.setBlock(basePos.chunkPosX+ix, basePos.chunkPosY+iy, basePos.chunkPosZ+iz, id, meta, 2);
+						world.setBlock(basePos.chunkPosX+ix, basePos.chunkPosY+iy, basePos.chunkPosZ+iz, block, meta, 2);
 					}
 				}
 			}
 			//Tile Ents
 			int numTileEnts = dataStream.readInt();
 			for (int i=0;i<numTileEnts;i++) {
-				NBTTagCompound nbt = (NBTTagCompound)NBTBase.readNamedTag(dataStream);
+				NBTTagCompound nbt = CompressedStreamTools.read(dataStream);
 				int px=nbt.getInteger("x")+basePos.chunkPosX;
 				int py=nbt.getInteger("y")+basePos.chunkPosY;
 				int pz=nbt.getInteger("z")+basePos.chunkPosZ;
@@ -194,22 +197,23 @@ public class StructureManager {
 				nbt.setInteger("y",py);
 				nbt.setInteger("z",pz);
 				TileEntity tileEnt = TileEntity.createAndLoadEntity(nbt);
-				world.setBlockTileEntity(px, py, pz, tileEnt); //addTileEntity(tileEnt);
+				world.setTileEntity(px,py,pz,tileEnt); // setBlockTileEntity(px, py, pz, tileEnt); //addTileEntity(tileEnt);
 			}
 			//Normal Ents
 			int numEnts = dataStream.readInt();
 			ArrayList<Entity> entstoload=new ArrayList<Entity>();
 			for (int i=0;i<numEnts;i++) {
-				NBTTagCompound nbt = (NBTTagCompound)NBTBase.readNamedTag(dataStream);
+				NBTTagCompound nbt = CompressedStreamTools.read(dataStream);
 				
 				//Delocalize position
-				NBTTagList pos = nbt.getTagList("Pos");
-				NBTTagDouble posx = (NBTTagDouble)pos.tagAt(0);
-				NBTTagDouble posy = (NBTTagDouble)pos.tagAt(1);
-				NBTTagDouble posz = (NBTTagDouble)pos.tagAt(2);
-				posx.data=posx.data+basePos.chunkPosX;
-				posy.data=posy.data+basePos.chunkPosY;
-				posz.data=posz.data+basePos.chunkPosZ;
+				NBTTagList pos = nbt.getTagList("Pos",6);
+				NBTTagDouble posx = (NBTTagDouble)pos.removeTag(0);
+				NBTTagDouble posy = (NBTTagDouble)pos.removeTag(0);
+				NBTTagDouble posz = (NBTTagDouble)pos.removeTag(0);
+				posx.func_150286_g();
+				pos.appendTag(new NBTTagDouble(posx.func_150286_g()+basePos.chunkPosX));
+				pos.appendTag(new NBTTagDouble(posy.func_150286_g()+basePos.chunkPosY));
+				pos.appendTag(new NBTTagDouble(posz.func_150286_g()+basePos.chunkPosZ));
 				
 				entstoload.add(EntityList.createEntityFromNBT(nbt,world));
 			}
