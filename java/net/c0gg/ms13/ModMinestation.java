@@ -298,7 +298,7 @@ public class ModMinestation {
 
 class BlockTeleport extends Block {
 	public BlockTeleport(int par1, Material par2Material) {
-		super(par1, par2Material);
+		super(par2Material);
 		setCreativeTab(ModMinestation.tabSpacestation);
 	}
 	

@@ -19,7 +19,7 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
 	public static final String[] subTypes = new String[] {"grey", "white", "black", "red","green","blue","yellow","purple","darkred","darkgreen","darkblue","brown"};
 	
 	public BlockFloorTile(int par1) {
-		super(par1, Material.rock);
+		super(Material.rock);
 		setBlockUnbreakable().setResistance(3).setStepSound(soundStoneFootstep);
 		
 		setBlockBounds(0,.8f,0,1,1,1);
@@ -34,7 +34,7 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
     	langReg.addStringLocalization("tile.ms13:floortile.red.name","Red Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.green.name","Green Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.blue.name","Blue Tile");
-    	langReg.addStringLocalization("tile.ms13:floortile.yellow.name","Yellow Tile");
+    	langReg.addStringLocalization("tile.ms13:floortile.chunkPosYellow.name","Yellow Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.purple.name","Purple Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.darkred.name","Dark Red Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.darkgreen.name","Dark Green Tile");

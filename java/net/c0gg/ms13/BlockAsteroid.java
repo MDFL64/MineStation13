@@ -17,7 +17,7 @@ public class BlockAsteroid extends Block {
 	private Icon[] icons;
 	
 	public BlockAsteroid(int id) {
-		super(id,Material.rock);
+		super(Material.rock);
 		
 		setHardness(1.5f).setResistance(10.0f).setCreativeTab(ModMinestation.tabSpacestation);
 		

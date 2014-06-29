@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 
 public class BlockAirlockAssembly extends Block {
 	public BlockAirlockAssembly(int par1) {
-		super(par1, ModMinestation.materialStationMetal);
+		super(ModMinestation.materialStationMetal);
 		setHardness(1).setResistance(1).setCreativeTab(ModMinestation.tabSpacestation);
 	}
 	
@@ -16,15 +16,15 @@ public class BlockAirlockAssembly extends Block {
 		//startPos
 		ChunkPosition sp;
 		
-		if (world.getBlockId(x, y+1, z)==this.blockID) {
+		if (world.getBlock(x, y+1, z)== this) {
 			sp = new ChunkPosition(x,y,z);
-		} else if (world.getBlockId(x, y-1, z)==this.blockID) {
+		} else if (world.getBlock(x, y-1, z)==this) {
 			sp = new ChunkPosition(x,y-1,z);
 		} else {
 			return;
 		}
 		
-		ChunkPosition[] positionsToCheck = new ChunkPosition[] {new ChunkPosition(sp.x+1,sp.y,sp.z),new ChunkPosition(sp.x-1,sp.y,sp.z),new ChunkPosition(sp.x,sp.y,sp.z+1),new ChunkPosition(sp.x,sp.y,sp.z-1)};
+		ChunkPosition[] positionsToCheck = new ChunkPosition[] {new ChunkPosition(sp.chunkPosX+1,sp.chunkPosY,sp.chunkPosZ),new ChunkPosition(sp.chunkPosX-1,sp.chunkPosY,sp.chunkPosZ),new ChunkPosition(sp.chunkPosX,sp.chunkPosY,sp.chunkPosZ+1),new ChunkPosition(sp.chunkPosX,sp.chunkPosY,sp.chunkPosZ-1)};
 		
 		//basePos
 		ChunkPosition bp=null;
@@ -32,7 +32,7 @@ public class BlockAirlockAssembly extends Block {
 		
 		for (int i=0;i<4;i++) {
 			ChunkPosition ip = positionsToCheck[i];
-			if (world.getBlockId(ip.x,ip.y,ip.z)==this.blockID&&world.getBlockId(ip.x,ip.y+1,ip.z)==this.blockID) {
+			if (world.getBlock(ip.chunkPosX,ip.chunkPosY,ip.chunkPosZ)==this&&world.getBlock(ip.chunkPosX,ip.chunkPosY+1,ip.chunkPosZ)==this) {
 				if (i>1) {
 					orientedZ=true;
 				}
@@ -52,15 +52,15 @@ public class BlockAirlockAssembly extends Block {
 	
 	private void setupBlocks(World world,ChunkPosition base,boolean orientedZ) {
 		if (!orientedZ) {
-			world.setBlock(base.x,base.y,base.z,ModMinestation.blockAirlockFrame.blockID,8,3);
-			world.setBlock(base.x+1,base.y,base.z,ModMinestation.blockAirlockFrame.blockID,9,3);
-			world.setBlock(base.x,base.y+1,base.z,ModMinestation.blockAirlockFrame.blockID,10,3);
-			world.setBlock(base.x+1,base.y+1,base.z,ModMinestation.blockAirlockFrame.blockID,11,3);
+			world.setBlock(base.chunkPosX,base.chunkPosY,base.chunkPosZ,ModMinestation.blockAirlockFrame,8,3); //Used to be blockName.blockID ~Pdan
+			world.setBlock(base.chunkPosX+1,base.chunkPosY,base.chunkPosZ,ModMinestation.blockAirlockFrame,9,3);
+			world.setBlock(base.chunkPosX,base.chunkPosY+1,base.chunkPosZ,ModMinestation.blockAirlockFrame,10,3);
+			world.setBlock(base.chunkPosX+1,base.chunkPosY+1,base.chunkPosZ,ModMinestation.blockAirlockFrame,11,3);
 		} else {
-			world.setBlock(base.x,base.y,base.z,ModMinestation.blockAirlockFrame.blockID,12,3);
-			world.setBlock(base.x,base.y,base.z+1,ModMinestation.blockAirlockFrame.blockID,13,3);
-			world.setBlock(base.x,base.y+1,base.z,ModMinestation.blockAirlockFrame.blockID,14,3);
-			world.setBlock(base.x,base.y+1,base.z+1,ModMinestation.blockAirlockFrame.blockID,15,3);
+			world.setBlock(base.chunkPosX,base.chunkPosY,base.chunkPosZ,ModMinestation.blockAirlockFrame,12,3);
+			world.setBlock(base.chunkPosX,base.chunkPosY,base.chunkPosZ+1,ModMinestation.blockAirlockFrame,13,3); 
+			world.setBlock(base.chunkPosX,base.chunkPosY+1,base.chunkPosZ,ModMinestation.blockAirlockFrame,14,3);
+			world.setBlock(base.chunkPosX,base.chunkPosY+1,base.chunkPosZ+1,ModMinestation.blockAirlockFrame,15,3);
 		}
 	}
 }

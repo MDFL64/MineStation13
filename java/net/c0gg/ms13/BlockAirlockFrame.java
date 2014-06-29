@@ -133,27 +133,27 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 	}
 	
 	private TileEntityAirlock getTileEnt(World w,int x,int y,int z) {
-		if (w.getBlockId(x, y, z)!=this.blockID) return null;
+		if (w.getBlock(x, y, z)!=this) return null;
 		int meta = w.getBlockMetadata(x, y, z);
 		meta&=7;
 		ChunkPosition pos=null;
 		switch (meta) {
 		case 0:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y,z);
+			return (TileEntityAirlock)w.getTileEntity(x,y,z);
 		case 1:
-			return (TileEntityAirlock)w.getBlockTileEntity(x-1,y,z);//TODO wrong?
+			return (TileEntityAirlock)w.getTileEntity(x-1,y,z);//TODO wrong?
 		case 2:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y-1,z);
+			return (TileEntityAirlock)w.getTileEntity(x,y-1,z);//Eclipse suggests getTileEntity instead of getBlockTileEntity ~Pdan
 		case 3:
-			return (TileEntityAirlock)w.getBlockTileEntity(x-1,y-1,z);
+			return (TileEntityAirlock)w.getTileEntity(x-1,y-1,z);
 		case 4:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y,z);
+			return (TileEntityAirlock)w.getTileEntity(x,y,z);
 		case 5:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y,z-1);
+			return (TileEntityAirlock)w.getTileEntity(x,y,z-1);
 		case 6:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y-1,z);
+			return (TileEntityAirlock)w.getTileEntity(x,y-1,z);
 		case 7:
-			return (TileEntityAirlock)w.getBlockTileEntity(x,y-1,z-1);
+			return (TileEntityAirlock)w.getTileEntity(x,y-1,z-1);
 		}
 		
 		return null;
@@ -190,7 +190,7 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 	public boolean onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
         super.onBlockEventReceived(par1World, par2, par3, par4, par5, par6);
-        TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
+        TileEntity tileentity = par1World.getTileEntity(par2, par3, par4);
         return tileentity != null ? tileentity.receiveClientEvent(par5, par6) : false;
     }
 	
@@ -210,32 +210,32 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
         	y2=y-1;
         }
         
-    	if (world.getBlockId(x,y2,z)==blockID) {
+    	if (world.getBlock(x,y2,z)==this) {
     		world.setBlockToAir(x,y2,z);
     	}
         
         if (!dir) {
         	if (!hpos) {
-        		if (world.getBlockId(x+1,y,z)==blockID)
+        		if (world.getBlock(x+1,y,z)==this)
         			world.setBlockToAir(x+1,y,z);
-        		if (world.getBlockId(x+1,y2,z)==blockID)
+        		if (world.getBlock(x+1,y2,z)==this)
         			world.setBlockToAir(x+1,y2,z);
         	} else {
-        		if (world.getBlockId(x-1,y,z)==blockID)
+        		if (world.getBlock(x-1,y,z)==this)
         			world.setBlockToAir(x-1,y,z);
-        		if (world.getBlockId(x-1,y2,z)==blockID)
+        		if (world.getBlock(x-1,y2,z)==this)
         			world.setBlockToAir(x-1,y2,z);
         	}
         } else {
         	if (!hpos) {
-        		if (world.getBlockId(x,y,z+1)==blockID)
+        		if (world.getBlock(x,y,z+1)==this)
         			world.setBlockToAir(x,y,z+1);
-        		if (world.getBlockId(x,y2,z+1)==blockID)
+        		if (world.getBlock(x,y2,z+1)==this)
         			world.setBlockToAir(x,y2,z+1);
         	} else {
-        		if (world.getBlockId(x,y,z-1)==blockID)
+        		if (world.getBlock(x,y,z-1)==this)
         			world.setBlockToAir(x,y,z-1);
-        		if (world.getBlockId(x,y2,z-1)==blockID)
+        		if (world.getBlock(x,y2,z-1)==this)
         			world.setBlockToAir(x,y2,z-1);
         	}
         }

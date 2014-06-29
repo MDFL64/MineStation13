@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 public class BlockStation extends Block {
 	public BlockStation(int par1) {
-		super(par1,ModMinestation.materialStationMetal);
+		super(ModMinestation.materialStationMetal);
 		setBlockUnbreakable().setCreativeTab(ModMinestation.tabSpacestation);
 	}
 	@Override

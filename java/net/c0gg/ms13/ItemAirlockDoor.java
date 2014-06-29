@@ -21,7 +21,7 @@ public class ItemAirlockDoor extends Item {
 	private Icon[] icons2=new Icon[AirlockType.values().length-1];
 	
 	public ItemAirlockDoor(int par1) {
-		super(par1);
+//		super(par1);
 		setMaxStackSize(1);
 		setHasSubtypes(true);
 		setCreativeTab(ModMinestation.tabSpacestation);

@@ -16,6 +16,6 @@ public class PlayerUtil {
 	}
 	
 	public static boolean isInRange(EntityPlayerMP ply,ChunkPosition pos) {
-		return ply.getDistanceSq(pos.x+.5d,pos.y+.5d,pos.z+.5d) < 36d;
+		return ply.getDistanceSq(pos.chunkPosX+.5d,pos.chunkPosY+.5d,pos.chunkPosZ+.5d) < 36d;
 	}
 }

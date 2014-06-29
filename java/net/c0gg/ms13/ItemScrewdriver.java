@@ -17,7 +17,7 @@ public class ItemScrewdriver extends Item {
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int dir, float lx, float ly, float lz)
     {
-		Block block = Block.blocksList[world.getBlockId(x,y,z)];
+		Block block = world.getBlock(x,y,z);
         
         if (block instanceof ToolableScrewdriver) {
         	((ToolableScrewdriver)block).onUseScrewdriver(world, x, y, z, dir);
