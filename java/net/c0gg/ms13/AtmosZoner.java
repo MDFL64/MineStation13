@@ -27,7 +27,6 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-
 public class AtmosZoner {
 	static private Hashtable<World,AtmosZoner> zoners=new Hashtable<World,AtmosZoner>();
 	

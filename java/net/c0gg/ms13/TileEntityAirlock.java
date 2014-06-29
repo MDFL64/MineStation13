@@ -46,7 +46,9 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 		} else {
 			flags &= ~(1<<flag.ordinal());
 		}
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags);
+		
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags); //blockAirlockFrame.blockID ~Pdan
+
 	}
 	
 	public boolean getFlag(AirlockFlag flag) {
@@ -56,7 +58,8 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	public void toggleFlag(AirlockFlag flag) {
 		if (worldObj.isRemote) return;
 		flags ^= (1<<flag.ordinal());
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags);
+
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,2,flags); //blockAirlockFrame.blockID ~Pdan
 	}
 	
 	public TileEntityAirlock() {
@@ -237,6 +240,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 			if (typeA==0) {
 				if (worldObj.isRemote) return true;
 				typeA=type.ordinal();
+				
 				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,0,typeA);
 				return true;
 			}
@@ -244,7 +248,9 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 			if (typeB==0) {
 				if (worldObj.isRemote) return true;
 				typeB=type.ordinal();
+				
 				worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,1,typeB);
+
 				return true;
 			}
 		}
@@ -368,6 +374,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	@Override
 	public void setWires(byte wires) {
 		hackwires=wires;
+		
 		worldObj.addBlockEvent(xCoord, yCoord, zCoord, ModMinestation.blockAirlockFrame,3,hackwires);
 	}
 

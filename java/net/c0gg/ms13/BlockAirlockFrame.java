@@ -3,8 +3,9 @@ package net.c0gg.ms13;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon; //YOLO ~Pdan
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -128,7 +129,7 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
     }
 	
 	@Override
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		return ModMinestation.blockStationBlock.getIcon(side,0);
 	}
 	
@@ -184,7 +185,7 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister) {}
+	public void registerIcons(IIconRegister iconRegister) {}
 	
 	@Override
 	public boolean onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)
@@ -196,7 +197,7 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 	
 	//Break all associated blocks when we break one.
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int meta) {
+	public void breakBlock(World world, int x, int y, int z, Block par5, int meta) {
 		super.breakBlock(world, x, y, z, par5, meta);
 		
 		boolean hpos=(meta&1)==1;

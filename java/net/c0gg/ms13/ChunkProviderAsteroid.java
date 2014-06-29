@@ -155,7 +155,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
                     {
                         i1 = -1;
                     }
-                    else if (b3 == Block.stone.blockID)
+                    else if (b3 == Block.stone.blockID) //Wat ~Pdan
                     {
                         if (i1 == -1)
                         {
