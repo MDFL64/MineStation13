@@ -7,8 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemScrewdriver extends Item {
-	public ItemScrewdriver(int id) {
-		super(id);
+	public ItemScrewdriver(){//(int id) {
+		//super(id);
 		
 		setMaxStackSize(1);
 		setCreativeTab(ModMinestation.tabSpacestation);

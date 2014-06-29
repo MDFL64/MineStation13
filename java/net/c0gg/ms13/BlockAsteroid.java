@@ -3,18 +3,18 @@ package net.c0gg.ms13;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon; //YOLO ~Pdan;
 
 public class BlockAsteroid extends Block {
 	public static final String[] subTypes = new String[] {"stone", "copper", "iron", "plasma","silver","gold","uranium","diamond","bananas"};
 	//public static final String[] fancyNames = new String[] {"Asteroid Stone", "Copper Ore", "Iron Ore", "Plasma Ore","Silver Ore","Gold Ore","Uranium Ore","Diamond Ore","Bananimum Ore"};
-	private Icon[] icons;
+	private IIcon[] icons;
 	
 	public BlockAsteroid(int id) {
 		super(Material.rock);
@@ -34,16 +34,16 @@ public class BlockAsteroid extends Block {
 	}
 	
 	@Override
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
     {
-		icons = new Icon[subTypes.length];
+		icons = new IIcon[subTypes.length];
 		for (int i=0;i<subTypes.length;i++) {
 			icons[i] = par1IconRegister.registerIcon("ms13:asteroid."+subTypes[i]);
 		}
     }
 	
 	@Override
-	public void getSubBlocks(int id, CreativeTabs creativeTab, List list)
+	public void getSubBlocks(Item id, CreativeTabs creativeTab, List list) //TODO: Maybe should be Block id?
     {
 		for (int i=0;i<subTypes.length;i++) {
 			list.add(new ItemStack(id,1,i));
@@ -57,7 +57,7 @@ public class BlockAsteroid extends Block {
     }
 	
 	@Override
-	public Icon getIcon(int side, int metadata)
+	public IIcon getIcon(int side, int metadata)
     {
         return icons[metadata];
     }

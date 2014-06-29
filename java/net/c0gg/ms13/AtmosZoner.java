@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
 
-import net.c0gg.ms13.AtmosZoner.chunkPosZonerAccessor;
+import net.c0gg.ms13.AtmosZoner.zonerAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
@@ -26,7 +26,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.event.entity.living.chunkPosZombieEvent;
 
 public class AtmosZoner {
 	static private Hashtable<World,AtmosZoner> zoners=new Hashtable<World,AtmosZoner>();

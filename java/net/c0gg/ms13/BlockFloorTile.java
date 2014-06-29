@@ -3,15 +3,15 @@ package net.c0gg.ms13;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister; 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon; //YOLO ~Pdan;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -81,7 +81,7 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
     }
 	
 	@Override
-	public void getSubBlocks(int id, CreativeTabs creativeTab, List list)
+	public void getSubBlocks(Item id, CreativeTabs creativeTab, List list) //TODO: Maybe this should be Block ID? Doubtful. ~Pdan
     {
 		for (int i=0;i<subTypes.length;i++) {
 			list.add(new ItemStack(id,1,i));

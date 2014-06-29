@@ -5,14 +5,14 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class BlockStationGlass extends BlockBreakable {
-	public BlockStationGlass(int id) {
-		super(id,null,Material.glass,false);
+	public BlockStationGlass() {
+		super(null,Material.glass,false); //YOLO ~Pdan
 		setHardness(5).setResistance(20).setStepSound(Block.soundGlassFootstep).setCreativeTab(ModMinestation.tabSpacestation);;
 	}
 	
@@ -23,7 +23,7 @@ public class BlockStationGlass extends BlockBreakable {
     }
 	
 	@Override
-	public void registerIcons(IconRegister iconregister)
+	public void registerIcons(IIconRegister iconregister)
     {
         this.blockIcon = iconregister.registerIcon(getTextureName());
     }
@@ -37,7 +37,7 @@ public class BlockStationGlass extends BlockBreakable {
 		}
 	}
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block par5, int par6) {
 		super.breakBlock(world, x, y, z, par5, par6);
 		AtmosZoner atmos = AtmosZoner.getForWorld(world);
 		if (atmos!=null) {

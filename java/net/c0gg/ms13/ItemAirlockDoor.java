@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,13 +12,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon; //YOLO ~Pdan;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
 
 public class ItemAirlockDoor extends Item {
-	private Icon[] icons1=new Icon[AirlockType.values().length-1];
-	private Icon[] icons2=new Icon[AirlockType.values().length-1];
+	private IIcon[] icons1=new IIcon[AirlockType.values().length-1];
+	private IIcon[] icons2=new IIcon[AirlockType.values().length-1];
 	
 	public ItemAirlockDoor(int par1) {
 //		super(par1);
@@ -41,7 +41,7 @@ public class ItemAirlockDoor extends Item {
     }
 	
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
         for (int i=0;i<AirlockType.values().length-1;i++) {
         	par3List.add(new ItemStack(par1, 1, i));
         	par3List.add(new ItemStack(par1, 1, 100+i));
@@ -49,7 +49,7 @@ public class ItemAirlockDoor extends Item {
     }
 	
 	@Override
-	public Icon getIconFromDamage(int dmg)
+	public IIcon getIconFromDamage(int dmg)
     {
 		if(dmg>=100) {
 			return icons1[dmg-100];
@@ -58,7 +58,7 @@ public class ItemAirlockDoor extends Item {
     }
 	
 	@Override
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
     {
 		for (int i=1;i<AirlockType.values().length;i++) {
 			icons1[i-1] = par1IconRegister.registerIcon("ms13:airlockdoor."+AirlockType.values()[i]+"1");

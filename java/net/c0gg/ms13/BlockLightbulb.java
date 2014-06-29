@@ -7,10 +7,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
 
 public class BlockLightbulb extends BlockTorch {
-	public BlockLightbulb(int id) {
-		super(id);
+	public BlockLightbulb() {
+		super();
 		setCreativeTab(ModMinestation.tabSpacestation);
-		setLightValue(0.9375F);
+		setLightLevel(0.9375F);
 	}
 	
 	@Override

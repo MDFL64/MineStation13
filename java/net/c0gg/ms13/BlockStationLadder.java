@@ -4,8 +4,8 @@ import net.minecraft.block.BlockLadder;
 import net.minecraft.creativetab.CreativeTabs;
 
 public class BlockStationLadder extends BlockLadder {
-	public BlockStationLadder(int id) {
-		super(id);
+	public BlockStationLadder() {
+		super();
 		setCreativeTab(ModMinestation.tabSpacestation);
 		setStepSound(ModMinestation.soundStationFootstep);
 	}

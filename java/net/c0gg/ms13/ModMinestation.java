@@ -116,26 +116,26 @@ public class ModMinestation {
 	static final Block blockStationReinforcedFree=new BlockStationFree(baseBlockIndex+2).setHardness(1).setResistance(20).setStepSound(soundStationFootstep);
 	static final Block blockStationReinforced=new BlockStationWelded(baseBlockIndex+3).setResistance(40).setStepSound(soundStationFootstep);
 	
-	static final Block blockStationGlass=new BlockStationGlass(baseBlockIndex+4);
+	static final Block blockStationGlass=new BlockStationGlass();//	(baseBlockIndex+4);
 	
 	static final Block blockAirlockAssembly=new BlockAirlockAssembly(baseBlockIndex+5).setStepSound(soundStationFootstep);
 	static final Block blockAirlockFrame=new BlockAirlockFrame(baseBlockIndex+6).setStepSound(soundStationFootstep);
 	
 	static final Block blockFloorTile=new BlockFloorTile(baseBlockIndex+7);
 	
-	static final Block blockLightbulb= new BlockLightbulb(baseBlockIndex+8);
-	static final Block blockLadder= new BlockStationLadder(baseBlockIndex+9);
+	static final Block blockLightbulb= new BlockLightbulb();//	(baseBlockIndex+8);
+	static final Block blockLadder= new BlockStationLadder();//	(baseBlockIndex+9);
 	
 	static final Block blockTeleport= new BlockTeleport(baseBlockIndex+100,Material.wood);
 	
 	//Items
-	static final Item itemScrewdriver=new ItemScrewdriver(baseItemIndex);
+	static final Item itemScrewdriver=new ItemScrewdriver();//	(baseItemIndex);
 	static final Item itemWelder=new ItemWelder(baseItemIndex+1);
-	static final Item itemIdCard=new ItemIdCard(baseItemIndex+2);
+	static final Item itemIdCard=new ItemIdCard();//				(baseItemIndex+2);
 	static final Item itemAntagonistCard=new ItemAntagonistCard(baseItemIndex+3);
-	static final Item itemWireCutters=new ItemHackingtool(baseItemIndex+4);
-	static final Item itemSolderGun=new ItemHackingtool(baseItemIndex+5);
-	static final Item itemMultitool=new ItemHackingtool(baseItemIndex+6);
+	static final Item itemWireCutters=new ItemHackingtool();//	(baseItemIndex+4);
+	static final Item itemSolderGun=new ItemHackingtool();//		(baseItemIndex+5);
+	static final Item itemMultitool=new ItemHackingtool();//		(baseItemIndex+6);
 	static final Item itemCrowbar=new ItemCrowbar(baseItemIndex+7);
 	static final Item itemAirlockDoor=new ItemAirlockDoor(baseItemIndex+8);
 	static final Item itemPants=new ItemPants(baseItemIndex+9);

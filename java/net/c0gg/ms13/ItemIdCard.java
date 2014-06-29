@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,15 +12,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon; //YOLO ~Pdan;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
 
 public class ItemIdCard extends Item {
-	private Icon[] icons=new Icon[4];
+	private IIcon[] icons=new IIcon[4];
 	
-	public ItemIdCard(int par1) {
-		super(par1);
+	public ItemIdCard() {
+		super();
 		setMaxStackSize(1);
 		setHasSubtypes(true);
 		setCreativeTab(ModMinestation.tabSpacestation);
@@ -41,7 +41,7 @@ public class ItemIdCard extends Item {
     }
 	
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) //YOLO ~Pdan
     {
         par3List.add(new ItemStack(par1, 1, 0));
         par3List.add(new ItemStack(par1, 1, 1));
@@ -60,13 +60,13 @@ public class ItemIdCard extends Item {
     }
 	
 	@Override
-	public Icon getIconFromDamage(int dmg)
+	public IIcon getIconFromDamage(int dmg)
     {
     	return icons[dmg];
     }
 	
 	@Override
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
     {
 		icons[0] = par1IconRegister.registerIcon("ms13:idCard.crew");
 		icons[1] = par1IconRegister.registerIcon("ms13:idCard.command");
