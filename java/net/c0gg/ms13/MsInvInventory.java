@@ -4,6 +4,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -114,7 +115,7 @@ public class MsInvInventory extends InventoryPlayer {
             {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
-                crashreportcategory.addCrashSection("Item ID", Integer.valueOf(par1ItemStack.itemID));
+                crashreportcategory.addCrashSection("Item name", Integer.valueOf(par1ItemStack.getDisplayName())); //Yolo ~Pdan
                 crashreportcategory.addCrashSection("Item data", Integer.valueOf(par1ItemStack.getItemDamage()));
                 //crashreportcategory.addCrashSectionCallable("Item name", new CallableItemName(this, par1ItemStack));
                 throw new ReportedException(crashreport);
@@ -124,7 +125,8 @@ public class MsInvInventory extends InventoryPlayer {
 	
 	private int storePartialItemStack(ItemStack par1ItemStack)
     {
-        int i = par1ItemStack.itemID;
+        ItemStack i = par1ItemStack;
+        Item v = i.getItem();
         int j = par1ItemStack.stackSize;
         int k;
 
@@ -163,7 +165,7 @@ public class MsInvInventory extends InventoryPlayer {
             {
                 if (this.mainInventory[k] == null)
                 {
-                    this.mainInventory[k] = new ItemStack(i, 0, par1ItemStack.getItemDamage());
+                    this.mainInventory[k] = new ItemStack(v, 0, par1ItemStack.getItemDamage()); //Superswag fix. ~Pdan
 
                     if (par1ItemStack.hasTagCompound())
                     {
@@ -200,9 +202,10 @@ public class MsInvInventory extends InventoryPlayer {
 	
 	private int storeItemStack(ItemStack par1ItemStack)
     {
+        Item v = par1ItemStack.getItem();
         for (int i = 0; i < usableSlotCount; ++i)
         {
-            if (this.mainInventory[i] != null && this.mainInventory[i].itemID == par1ItemStack.itemID && this.mainInventory[i].isStackable() && this.mainInventory[i].stackSize < this.mainInventory[i].getMaxStackSize() && this.mainInventory[i].stackSize < this.getInventoryStackLimit() && (!this.mainInventory[i].getHasSubtypes() || this.mainInventory[i].getItemDamage() == par1ItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(this.mainInventory[i], par1ItemStack))
+            if (this.mainInventory[i] != null && this.mainInventory[i].getItem() == v && this.mainInventory[i].isStackable() && this.mainInventory[i].stackSize < this.mainInventory[i].getMaxStackSize() && this.mainInventory[i].stackSize < this.getInventoryStackLimit() && (!this.mainInventory[i].getHasSubtypes() || this.mainInventory[i].getItemDamage() == par1ItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(this.mainInventory[i], par1ItemStack))
             {
                 return i;
             }
@@ -241,7 +244,7 @@ public class MsInvInventory extends InventoryPlayer {
 	public boolean hasAccessKey(String accessType) {
 		ItemStack card = mainInventory[0];
 		
-		if (card==null||card.itemID!=ModMinestation.itemIdCard.itemID||card.stackTagCompound == null||!card.stackTagCompound.hasKey("idAccessKeys")) {
+		if (card==null||card.getItem()!=ModMinestation.itemIdCard||card.stackTagCompound == null||!card.stackTagCompound.hasKey("idAccessKeys")) {
 			return false;
 		}
 		

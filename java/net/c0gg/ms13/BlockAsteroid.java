@@ -33,7 +33,7 @@ public class BlockAsteroid extends Block {
     	langReg.addStringLocalization("tile.ms13:asteroid.bananas.name","Bananimum Ore");
 	}
 	
-	@Override
+	//@Override TODO:EXTREME YOLOSWAG FIX ~Pdan
 	public void registerIcons(IIconRegister par1IconRegister)
     {
 		icons = new IIcon[subTypes.length];

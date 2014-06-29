@@ -32,7 +32,7 @@ public class GuiHacking extends GuiScreen {
 	@Override
 	protected void keyTyped(char par1, int par2)
 	{
-        if (par2 == 1 || par2 == this.mc.gameSettings.keyBindInventory.keyCode)
+        if (par2 == 1 || par2 == this.mc.gameSettings.keyBindInventory.getKeyCode())
         {
         	mc.displayGuiScreen((GuiScreen)null);
         }
