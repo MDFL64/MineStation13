@@ -12,9 +12,9 @@ public class BlockStationFree extends Block implements ToolableWelder {
 		super(ModMinestation.materialStationMetal);
 		setCreativeTab(ModMinestation.tabSpacestation);
 	}
-	
+	private Block StationWelded = ModMinestation.blockStationBlock;
 	@Override
 	public void onUseWelder(World world, int x, int y, int z, int dir) {
-		world.setBlock(x, y, z, blockID+1);
+		world.setBlock(x, y, z, StationWelded);
 	}
 }
