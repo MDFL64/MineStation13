@@ -5,7 +5,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 
+/**
+ * Outer workings of an airlock.
+ * @author Parakeet
+ *
+ */
 public class BlockAirlockAssembly extends Block {
+	
 	public BlockAirlockAssembly(int par1) {
 		super(ModMinestation.materialStationMetal);
 		setHardness(1).setResistance(1).setCreativeTab(ModMinestation.tabSpacestation);
@@ -50,6 +56,15 @@ public class BlockAirlockAssembly extends Block {
 		setupBlocks(world,bp,orientedZ);
 	}
 	
+	/**
+	 * Called from onBlockAdded.  
+	 * 
+	 * @param world The game world
+	 * @param base The position of the airlock base
+	 * @param orientedZ Whether or not the airlock is oriented along the z axis.
+	 * 
+	 * @todo Confirm these params, please.
+	 */
 	private void setupBlocks(World world,ChunkPosition base,boolean orientedZ) {
 		if (!orientedZ) {
 			world.setBlock(base.chunkPosX,base.chunkPosY,base.chunkPosZ,ModMinestation.blockAirlockFrame,8,3); //Used to be blockName.blockID ~Pdan
