@@ -9,6 +9,12 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.StatCollector;
 
+/**
+ * Handles gui functionality for the airlock
+ * 
+ * @author Parakeet
+ *
+ */
 public class GuiAirlockSetup extends GuiScreen {
 	private TileEntityAirlock entityAirlock;
 	private GuiTextField inputField;

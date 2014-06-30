@@ -18,6 +18,12 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+/**
+ * Inner frame for an airlock.
+ * 
+ * @author Parakeet
+ *
+ */
 public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriver, ToolableWelder, ToolableCrowbar {
 	public BlockAirlockFrame(int par1) {
 		super(par1);
@@ -65,6 +71,9 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
     	}
     }
 	
+	/**
+	 * @todo never seen meta before.
+	 */
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z)
     {
@@ -97,6 +106,9 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
         }
     }
 	
+	/**
+	 * When the block is activated, something needs to happen.
+	 */
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int dir, float par7, float par8, float par9)
     {
@@ -133,6 +145,15 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 		return ModMinestation.blockStationBlock.getIcon(side,0);
 	}
 	
+	/**
+	 * Get the base tile of the airlock frame.
+	 * 
+	 * @param w The World
+	 * @param x x pos
+	 * @param y y pos
+	 * @param z z pos
+	 * @return null
+	 */
 	private TileEntityAirlock getTileEnt(World w,int x,int y,int z) {
 		if (w.getBlock(x, y, z)!=this) return null;
 		int meta = w.getBlockMetadata(x, y, z);
@@ -160,6 +181,17 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 		return null;
 	}
 	
+	/**
+	 * Creates a door at the base of the airlock
+	 * 
+	 * @param w The World
+	 * @param x x pos
+	 * @param y y pos
+	 * @param z z pos
+	 * @param doorB 
+	 * @param type
+	 * @return
+	 */
 	public boolean addDoor(World w,int x,int y,int z,     boolean doorB,AirlockType type) {
 		TileEntityAirlock ent = getTileEnt(w, x, y, z);
 		if (ent==null) return false;
@@ -195,7 +227,9 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
         return tileentity != null ? tileentity.receiveClientEvent(par5, par6) : false;
     }
 	
-	//Break all associated blocks when we break one.
+	/**
+	 * Break all associated blocks when we break one.
+	 */
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block par5, int meta) {
 		super.breakBlock(world, x, y, z, par5, meta);

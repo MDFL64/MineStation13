@@ -16,6 +16,12 @@ import net.minecraft.util.IIcon; //YOLO ~Pdan;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
 
+/**
+ * Item for an airlock
+ * 
+ * @author Parakeet
+ *
+ */
 public class ItemAirlockDoor extends Item {
 	private IIcon[] icons1=new IIcon[AirlockType.values().length-1];
 	private IIcon[] icons2=new IIcon[AirlockType.values().length-1];
