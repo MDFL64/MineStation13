@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
 
@@ -17,8 +18,8 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 
 public class TickerInvSwapper { //CLIENTSIDE
 	@SubscribeEvent
-	public void onTick(TickEvent tick) {
-		if (tick.phase==Phase.END && tick.type==Type.CLIENT) {
+	public void onTick(ClientTickEvent tick) {
+		if (tick.phase==Phase.END) {
 			GuiScreen gui = Minecraft.getMinecraft().currentScreen;
 			if (gui!=null&&gui.getClass()==GuiInventory.class) {
 				Minecraft.getMinecraft().displayGuiScreen(new MsInvGui(Minecraft.getMinecraft().thePlayer));

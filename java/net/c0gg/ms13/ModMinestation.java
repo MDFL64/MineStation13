@@ -65,6 +65,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -187,20 +188,23 @@ public class ModMinestation {
     	//Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
     	
     	//Register player textures.
-    	ItemClothing.loadImages();
-    	TexturePlayer.loadImages();
+    	if (event.getSide()==Side.CLIENT) {
+	    	ItemClothing.loadImages();
+	    	TexturePlayer.loadImages();
+	    }
     	
     	//Dimension registry
     	
     	DimensionManager.registerProviderType(dimensionIdAsteroid,WorldProviderAsteroid.class,false);
     	DimensionManager.registerDimension(dimensionIdAsteroid,dimensionIdAsteroid);
     	
-    	//Ticker registry
-    	
-    	//TickRegistry.registerTickHandler(new TickerAtmos(),Side.SERVER); TODO update
-    	//TickRegistry.registerTickHandler(new TickerPhysExt(),Side.SERVER); TODO update
-    	
-    	//TickRegistry.registerTickHandler(new TickerInvSwapper(),Side.CLIENT); TODO update
+    	//Ticker registry TODO These classes no longer need to exist, tick listening code can be moved elsewhere.
+    	if (event.getSide()==Side.SERVER) {
+    		FMLCommonHandler.instance().bus().register(new TickerAtmos());
+    		FMLCommonHandler.instance().bus().register(new TickerPhysExt());
+	    } else {
+	    	FMLCommonHandler.instance().bus().register(new TickerInvSwapper());
+	    }
     	
     	//Language registry
     	

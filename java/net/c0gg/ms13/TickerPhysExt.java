@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
+import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,12 +20,12 @@ import net.minecraft.util.Vec3;
 //import cpw.mods.fml.common.network.Player;
 
 //Physical extensions...or something like that.
-public class TickerPhysExt { //CLIENTSIDE? SERVERSIDE? NOT SURE
+public class TickerPhysExt { //CLIENTSIDE? SERVERSIDE? NOT SURE -- I THINK IT's SERVERSIDE!
 	public static HashMap<Entity,Entity> grabs = new HashMap<Entity,Entity>();
 	
 	@SubscribeEvent
-	public void onTick(TickEvent tick) {
-		if (tick.phase==Phase.START && tick.type==Type.WORLD) {
+	public void onTick(WorldTickEvent tick) {
+		if (tick.phase==Phase.START) {
 			for (Entity grabber:grabs.keySet()) {
 				Entity grabbed=grabs.get(grabber);
 				

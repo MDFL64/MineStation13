@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
+import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 //import cpw.mods.fml.common.ITickHandler;
 //import cpw.mods.fml.common.TickType;
@@ -16,8 +17,8 @@ public class TickerAtmos { //ONLY RUN ON SERVER PLEASE
 	}*/
 
 	@SubscribeEvent
-	public void onTick(TickEvent tick) {
-		if (tick.phase==Phase.START && tick.type==Type.WORLD)
+	public void onTick(WorldTickEvent tick) {
+		if (tick.phase==Phase.START)
 			AtmosZoner.updateAll();
 	}
 
