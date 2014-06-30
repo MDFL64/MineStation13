@@ -11,20 +11,15 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 
 
-public class PacketHandlerMinestation implements IPacketHandler {
+public class PacketHandlerMinestation /*implements IPacketHandler {
 	
 	enum Client2ServerSubtypes {
 		GRAB,AIRLOCKSETUP,HACK;
@@ -341,4 +336,48 @@ public class PacketHandlerMinestation implements IPacketHandler {
 			System.out.println("Warning! Error reading packet from "+((EntityPlayer)player).getDisplayName()+": "+e.getMessage());
 		}
 	}
+}*/
+{
+
+	public static void svSendAtmosDebugSetPos(int hashCode, ChunkPosition pos) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void svSendAtmosDebugClearPos(ChunkPosition pos) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void svSendAtmosDebugClearZone(int hashCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void svSendAtmosDebugTransfer(int hashCode, int hashCode2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void clSendAirlockSetup(TileEntityAirlock entityAirlock,
+			String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void clSendHack(Hackable target, int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void clSendPlyGrab(Entity entity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void svSendAtmosDebugToggle(EntityPlayer player) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

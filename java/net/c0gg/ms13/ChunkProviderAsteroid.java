@@ -18,11 +18,96 @@ import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import net.minecraftforge.common.*;
-import net.minecraftforge.event.Event.*;
 import net.minecraftforge.event.terraingen.*;
 
 public class ChunkProviderAsteroid implements IChunkProvider
 {
+
+	public ChunkProviderAsteroid(World worldObj, long seed) {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public boolean chunkExists(int var1, int var2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Chunk provideChunk(int var1, int var2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Chunk loadChunk(int var1, int var2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void populate(IChunkProvider var1, int var2, int var3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean saveChunks(boolean var1, IProgressUpdate var2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean unloadQueuedChunks() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canSave() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String makeString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getPossibleCreatures(EnumCreatureType var1, int var2, int var3,
+			int var4) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ChunkPosition func_147416_a(World var1, String var2, int var3,
+			int var4, int var5) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getLoadedChunkCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void recreateStructures(int var1, int var2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveExtraData() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+/*{
     private Random endRNG;
     private NoiseGeneratorOctaves noiseGen1;
     private NoiseGeneratorOctaves noiseGen2;
@@ -32,7 +117,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     private World endWorld;
     private double[] densities;
 
-    /** The biomes that are used to generate the chunk */
+    /** The biomes that are used to generate the chunk *
     private BiomeGenBase[] biomesForGeneration;
     double[] noiseData1;
     double[] noiseData2;
@@ -189,7 +274,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * loads or generates the chunk at the chunk location specified
-     */
+     *
     public Chunk loadChunk(int par1, int par2)
     {
         return this.provideChunk(par1, par2);
@@ -198,7 +283,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     /**
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
      * specified chunk from the map seed and chunk seed
-     */
+     *
     public Chunk provideChunk(int par1, int par2)
     {
         this.endRNG.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
@@ -220,7 +305,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     /**
      * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
      * size.
-     */
+     *
     private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
     {
         ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
@@ -362,7 +447,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Checks to see if a chunk exists at x, y
-     */
+     *
     public boolean chunkExists(int par1, int par2)
     {
         return true;
@@ -370,7 +455,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Populates chunk with ores etc etc
-     */
+     *
     public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
     {
         BlockSand.fallInstantly = true;
@@ -390,7 +475,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     /**
      * Two modes of operation: if passed true, save all Chunks in one go.  If passed false, save up to two chunks.
      * Return true if all chunks have been saved.
-     */
+     *
     public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
     {
         return true;
@@ -400,7 +485,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     */
+     *
     public boolean unloadQueuedChunks()
     {
         return false;
@@ -408,7 +493,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Returns if the IChunkProvider supports saving.
-     */
+     *
     public boolean canSave()
     {
         return true;
@@ -416,7 +501,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Converts the instance data to a readable string.
-     */
+     *
     public String makeString()
     {
         return "RandomLevelSource";
@@ -424,7 +509,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Returns a list of creatures of the specified type that can spawn at the given location.
-     */
+     *
     public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
     {
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(par2, par4);
@@ -433,7 +518,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Returns the location of the closest structure of the specified type. If not found returns null.
-     */
+     *
     public ChunkPosition findClosestStructure(World par1World, String par2Str, int par3, int par4, int par5)
     {
         return null;
@@ -449,4 +534,4 @@ public class ChunkProviderAsteroid implements IChunkProvider
 	public void saveExtraData() {
 		//DO nothing
 	}
-}
+}*/

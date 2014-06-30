@@ -10,6 +10,6 @@ public class BlockStationWelded extends BlockStation implements ToolableWelder {
 	
 	@Override
 	public void onUseWelder(World world, int x, int y, int z, int dir) {
-		world.setBlock(x, y, z, blockID-1);
+		//world.setBlock(x, y, z, blockID-1); TODO fix
 	}
 }

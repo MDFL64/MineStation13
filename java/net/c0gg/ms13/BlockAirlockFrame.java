@@ -184,8 +184,9 @@ public class BlockAirlockFrame extends BlockStation implements ToolableScrewdriv
 		return tileEnt;
 	}
 	
-	//@Override TODO:EXTREME YOLOSWAG FIX ~Pdan
-	public void registerIcons(IIconRegister iconRegister) {}
+	
+	@Override
+	public void registerBlockIcons(IIconRegister iconRegister) {}
 	
 	@Override
 	public boolean onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)

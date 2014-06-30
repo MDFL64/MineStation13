@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.StatCollector;
 
 public class GuiAirlockSetup extends GuiScreen {
@@ -78,7 +77,7 @@ public class GuiAirlockSetup extends GuiScreen {
         drawDefaultBackground();
     	super.drawScreen(par1, par2, par3); //this draws buttons, if we have any
         //GL11.glDisable(GL11.GL_LIGHTING);
-    	//YOLO fontRenderer ~Pdan
+
         fontRendererObj.drawString(StatCollector.translateToLocal("container.airlocksetup"), guiLeft+15, guiTop+5, 0xFFFFFF);
         inputField.drawTextBox();
     }

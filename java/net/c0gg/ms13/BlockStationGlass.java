@@ -22,8 +22,8 @@ public class BlockStationGlass extends BlockBreakable {
         return 0;
     }
 	
-	//@Override Yoooolooooo ~Pdan
-	public void registerIcons(IIconRegister iconregister)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister)
     {
         this.blockIcon = iconregister.registerIcon(getTextureName());
     }

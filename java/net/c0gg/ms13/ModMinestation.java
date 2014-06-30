@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.StepSound;
+import net.minecraft.block.Block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
-import net.minecraft.item.ItemMultiTextureTile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,6 +45,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -61,28 +61,21 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 //import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid="ms13", name=ModMinestation.nameFancy, version="0")
@@ -105,15 +98,15 @@ public class ModMinestation {
         	return new ItemStack(blockStationBlock,1,0);
         }
 
-		@Override //TODO TODO TODO TODO ACTUALLY FILL THIS SHIT IN!!! ~Pdan
+		@Override
 		public Item getTabIconItem() {
-			// TODO Auto-generated method stub
+			// TODO add stuff
 			return null;
 		}
 	};
 	
 	static final Material materialStationMetal=new Material(MapColor.ironColor);
-	static final StepSound soundStationFootstep=new StepSoundMs("stationMetal",1,1); //replaced with soundtype ???
+	static final SoundType soundStationFootstep= null; //new StepSoundMs("stationMetal",1,1); //replaced with soundtype ??? TODO FIX StepsoundMs
 	
 	//Blocks
 	static final Block blockAsteroid=new BlockAsteroid(baseGenIndex);
@@ -189,9 +182,9 @@ public class ModMinestation {
 	
     @EventHandler
     public void load(FMLInitializationEvent event) {    	
-    	//TODO see if this should go somewhere else
-    	Item.itemsList[blockAsteroid.blockID]=new ItemMultiTextureTile(blockAsteroid.blockID-256,blockAsteroid,BlockAsteroid.subTypes);//.setUnlocalizedName(blockAsteroid.getUnlocalizedName2());
-    	Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
+    	//TODO see if this should go somewhere else TODO fix that crap
+    	//Item.itemsList[blockAsteroid.blockID]=new ItemMultiTextureTile(blockAsteroid.blockID-256,blockAsteroid,BlockAsteroid.subTypes);//.setUnlocalizedName(blockAsteroid.getUnlocalizedName2());
+    	//Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
     	
     	//Dimension registry
     	
@@ -200,10 +193,10 @@ public class ModMinestation {
     	
     	//Ticker registry
     	
-    	TickRegistry.registerTickHandler(new TickerAtmos(),Side.SERVER);
-    	TickRegistry.registerTickHandler(new TickerPhysExt(),Side.SERVER);
+    	//TickRegistry.registerTickHandler(new TickerAtmos(),Side.SERVER); TODO update
+    	//TickRegistry.registerTickHandler(new TickerPhysExt(),Side.SERVER); TODO update
     	
-    	TickRegistry.registerTickHandler(new TickerInvSwapper(),Side.CLIENT);
+    	//TickRegistry.registerTickHandler(new TickerInvSwapper(),Side.CLIENT); TODO update
     	
     	//Language registry
     	
@@ -224,7 +217,7 @@ public class ModMinestation {
     	RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new RenderMobPlayer());
     	
     	//Key bind registry
-    	KeyBindingRegistry.registerKeyBinding(new KeyHandlerMinestation());
+    	//KeyBindingRegistry.registerKeyBinding(new KeyHandlerMinestation()); TODO update
     	
     	//Register this for events
     	MinecraftForge.EVENT_BUS.register(this);
@@ -235,12 +228,12 @@ public class ModMinestation {
     	//These sounds are pretty terrible...I was originally stealing stuff from HL2 but then decided it would be
     	//a good idea not to commit that so I made my own placeholders.
     	
-    	event.manager.addSound("ms13:step/stationMetal1.wav");
+    	/*event.manager.addSound("ms13:step/stationMetal1.wav"); TODO fix this garbage
     	event.manager.addSound("ms13:step/stationMetal2.wav");
     	event.manager.addSound("ms13:step/stationMetal3.wav");
     	event.manager.addSound("ms13:step/stationMetal4.wav");
     	
-    	event.manager.addSound("ms13:dig/stationMetal.wav");
+    	event.manager.addSound("ms13:dig/stationMetal.wav");*/
     }
     
     @EventHandler
@@ -257,8 +250,9 @@ public class ModMinestation {
     
     //TODO Should fancy names be stored in language files in future?
     public static void registerBlock(Block b, String name, String fancyName) {
-	    b.setUnlocalizedName("ms13:"+name);
-	    b.setTextureName("ms13:"+name);
+    	b.setBlockName("ms13:"+name);
+	    //b.setUnlocalizedName("ms13:"+name); 
+	    //b.setTextureName("ms13:"+name); TODO fix
     	
     	if (fancyName!=null) {
     		LanguageRegistry.instance().addStringLocalization(b.getUnlocalizedName()+".name",fancyName);
@@ -349,11 +343,11 @@ class CommandAtmos extends CommandBase {
 				if (astring[0].equals("put")) {
 					atmos.testPut(pos);
 				} else if (astring[0].equals("get")) {
-					player.addChatMessage(atmos.testGet(pos));
+					player.addChatMessage(new ChatComponentText(atmos.testGet(pos)));
 				} else if (astring[0].equals("debug")) {
 					PacketHandlerMinestation.svSendAtmosDebugToggle((EntityPlayer)player); //Yolo ~Pdan
 				} else {
-					player.addChatMessage("Function '"+astring[0]+"' does not exist. Valid functions are: put get debug");
+					player.addChatMessage(new ChatComponentText("Function '"+astring[0]+"' does not exist. Valid functions are: put get debug"));
 				}
 			}
 		}

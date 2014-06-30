@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister; 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -28,7 +29,7 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
         //setUnlocalizedName("ms13:floortile").setTextureName("ms13:floortile");
         
         LanguageRegistry langReg = LanguageRegistry.instance();
-        langReg.addStringLocalization("tile.ms13:floortile.grey.name","Grey Tile");
+        langReg.addStringLocalization("tile.ms13:floortile.grey.name","Grey Tile"); //TODO update
     	langReg.addStringLocalization("tile.ms13:floortile.white.name","White Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.black.name","Black Tile");
     	langReg.addStringLocalization("tile.ms13:floortile.red.name","Red Tile");
@@ -96,6 +97,8 @@ public class BlockFloorTile extends Block implements ToolableCrowbar {
 
 	@Override
 	public void onUseCrowbar(World world, int x, int y, int z, int dir) {
-		world.destroyBlock(x, y, z, true);
+		int meta = world.getBlockMetadata(x,y,z);
+		dropBlockAsItem(world, x, y, z, meta, 0);
+		world.setBlockToAir(x, y, z);
 	}
 }

@@ -29,8 +29,8 @@ public class ItemIdCard extends Item {
 		//it.setItemName("Gooby");
 	}
 	
-	//@Override
-	public String getItemDisplayName(ItemStack itemStack)
+	@Override
+	public String getItemStackDisplayName(ItemStack itemStack)
     {
 		NBTTagCompound nbt = itemStack.stackTagCompound;
 		if (nbt == null||!nbt.hasKey("idName")) {

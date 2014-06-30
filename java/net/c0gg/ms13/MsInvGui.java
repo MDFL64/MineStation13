@@ -41,6 +41,6 @@ public class MsInvGui extends GuiInventory {
         int l = this.guiTop;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
         //Draws the player on the GUI
-        func_110423_a(k + 105, l + 110, 50, (float)(k + 105) - this.xSize_lo, (float)(l + 30) - this.ySize_lo, this.mc.thePlayer);
+        func_147046_a(k + 105, l + 110, 50, (float)(k + 105) - this.xSize_lo, (float)(l + 30) - this.ySize_lo, this.mc.thePlayer);
     }
 }

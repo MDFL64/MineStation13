@@ -165,7 +165,7 @@ public class MsInvInventory extends InventoryPlayer {
             {
                 if (this.mainInventory[k] == null)
                 {
-                    this.mainInventory[k] = new ItemStack(v, 0, par1ItemStack.getItemDamage()); //Superswag fix. ~Pdan
+                    this.mainInventory[k] = new ItemStack(v, 0, par1ItemStack.getItemDamage());
 
                     if (par1ItemStack.hasTagCompound())
                     {
@@ -250,11 +250,11 @@ public class MsInvInventory extends InventoryPlayer {
 		
 		NBTTagCompound nbt = card.stackTagCompound;
 		
-		NBTTagList accessKeys = nbt.getTagList("idAccessKeys");
+		/*NBTTagList accessKeys = nbt.getTagList("idAccessKeys"); TODO they did something stupid to NBT lists that I don't want to deal with at the moment.
 		for (int i=0;i<accessKeys.tagCount();i++) {
 			if (((NBTTagString)accessKeys.tagAt(i)).data.equals(accessType))
 				return true;
-		}
+		}*/
 		
 		return false;
 	}
