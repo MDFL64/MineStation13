@@ -201,8 +201,8 @@ public class ModMinestation {
     	//Language registry
     	
     	LanguageRegistry langReg = LanguageRegistry.instance();
-    	langReg.addStringLocalization("itemGroup.tabMineStation",nameFancy);
-    	langReg.addStringLocalization("container.airlocksetup","What access key should this airlock use?");
+    	//langReg.addStringLocalization("itemGroup.tabMineStation",nameFancy);
+    	//langReg.addStringLocalization("container.airlocksetup","What access key should this airlock use?");
     	
     	//Block rendering registry
     	RenderingRegistry.registerBlockHandler(new RenderBlockAirlockFrame());
