@@ -13,8 +13,9 @@ public class BlockStationFree extends Block implements ToolableWelder {
 		setCreativeTab(ModMinestation.tabSpacestation);
 	}
 	
+	/** Change to the welded version of the block. */
 	@Override
 	public void onUseWelder(World world, int x, int y, int z, int dir) {
-		//world.setBlock(x, y, z, blockID+1); TODO fix
+		world.setBlock(x, y, z, ModMinestation.blockStationBlock);
 	}
 }

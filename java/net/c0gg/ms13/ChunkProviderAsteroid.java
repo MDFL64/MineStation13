@@ -230,7 +230,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
                 int i1 = -1;
                 byte b1 = (byte)Block.whiteStone.blockID; //Wat? ~Pdan
                 byte b2 = (byte)Block.whiteStone.blockID;
-
+          
                 for (int j1 = 127; j1 >= 0; --j1)
                 {
                     int k1 = (l * 16 + k) * 128 + j1;

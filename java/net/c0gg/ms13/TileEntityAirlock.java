@@ -19,6 +19,12 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 
+/**
+ * 
+ * 
+ * @author Parakeets
+ *
+ */
 public class TileEntityAirlock extends TileEntity implements Hackable {
 	
 	private static final float animSpeed =.1f;
@@ -38,6 +44,7 @@ public class TileEntityAirlock extends TileEntity implements Hackable {
 	private int flags;
 	private String key;
 	private byte hackwires;
+	
 	
 	private void setFlag(AirlockFlag flag,boolean value) {
 		if (worldObj.isRemote) return;
