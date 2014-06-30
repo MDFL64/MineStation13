@@ -1,0 +1,12 @@
+ {
+  "music.menu": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "music/menu/major_tom_hadfield",
+        "stream": true
+      }
+      
+    ]
+  }
+}
