@@ -1,15 +1,15 @@
 [
 {
-  "modid": "dickbutt",
-  "name": "DICK_BUTTTT",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
+  "modid": "ms13",
+  "name": "MineStation13",
+  "description": "A mod inspired by the popular BYOND game, Space Station 13.",
+  "version": "PRE-ALPHA",
+  "mcversion": "1.7.2",
+  "url": "https://github.com/birdbrainswagtrain/MineStation13",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
-  "logoFile": "",
+  "authorList": ["MadParakeet","Pdan4","Lebull"],
+  "credits": "",
+  "logoFile": "logo.png",
   "screenshots": [],
   "dependencies": []
 }

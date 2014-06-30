@@ -251,8 +251,7 @@ public class ModMinestation {
     //TODO Should fancy names be stored in language files in future?
     public static void registerBlock(Block b, String name, String fancyName) {
     	b.setBlockName("ms13:"+name);
-	    //b.setUnlocalizedName("ms13:"+name); 
-	    //b.setTextureName("ms13:"+name); TODO fix
+	    b.setBlockTextureName("ms13:"+name);
     	
     	if (fancyName!=null) {
     		LanguageRegistry.instance().addStringLocalization(b.getUnlocalizedName()+".name",fancyName);
