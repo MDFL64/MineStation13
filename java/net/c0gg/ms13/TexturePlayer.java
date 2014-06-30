@@ -16,8 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class TexturePlayer {
-	static BufferedImage txBaseM = loadImage("ms13:textures/mob/base_m.png");
-	static BufferedImage txBaseF = loadImage("ms13:textures/mob/base_f.png");
+	static BufferedImage txBaseM;
+	static BufferedImage txBaseF;
 	
 	private int id;
 	private int idSuit;
@@ -32,6 +32,11 @@ public class TexturePlayer {
 	public int colorPants;
 	
 	MsInvInventory inventory;
+	
+	public static void loadImages() {
+		txBaseM = loadImage("ms13:textures/mob/base_m.png");
+		txBaseF = loadImage("ms13:textures/mob/base_f.png");
+	}
 	
 	public TexturePlayer(MsInvInventory inventory) {
 		id = TextureUtil.glGenTextures();

@@ -186,6 +186,10 @@ public class ModMinestation {
     	//Item.itemsList[blockAsteroid.blockID]=new ItemMultiTextureTile(blockAsteroid.blockID-256,blockAsteroid,BlockAsteroid.subTypes);//.setUnlocalizedName(blockAsteroid.getUnlocalizedName2());
     	//Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
     	
+    	//Register player textures.
+    	ItemClothing.loadImages();
+    	TexturePlayer.loadImages();
+    	
     	//Dimension registry
     	
     	DimensionManager.registerProviderType(dimensionIdAsteroid,WorldProviderAsteroid.class,false);
