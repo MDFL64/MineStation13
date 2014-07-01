@@ -20,17 +20,6 @@ public class BlockAsteroid extends Block {
 		super(Material.rock);
 		
 		setHardness(1.5f).setResistance(10.0f).setCreativeTab(ModMinestation.tabSpacestation);
-		
-		LanguageRegistry langReg = LanguageRegistry.instance();
-    	langReg.addStringLocalization("tile.ms13:asteroid.stone.name","Asteroid Stone");
-    	langReg.addStringLocalization("tile.ms13:asteroid.copper.name","Copper Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.iron.name","Iron Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.plasma.name","Plasma Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.silver.name","Silver Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.gold.name","Gold Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.uranium.name","Uranium Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.diamond.name","Diamond Ore");
-    	langReg.addStringLocalization("tile.ms13:asteroid.bananas.name","Bananimum Ore");
 	}
 	
 	@Override

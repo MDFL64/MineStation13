@@ -1,0 +1,52 @@
+tile.ms13.asteroid.stone.name=Asteroid Stone
+tile.ms13.asteroid.copper.name=Copper Ore
+tile.ms13.asteroid.iron.name=Iron Ore
+tile.ms13.asteroid.plasma.name=Plasma Ore
+tile.ms13.asteroid.silver.name=Silver Ore
+tile.ms13.asteroid.gold.name=Gold Ore
+tile.ms13.asteroid.uranium.name=Uranium Ore
+tile.ms13.asteroid.diamond.name=Diamond Ore
+tile.ms13.asteroid.bananas.name=Bananimum Ore
+
+tile.ms13.floortile.grey.name=Grey Tile
+tile.ms13.floortile.white.name=White Tile
+tile.ms13.floortile.black.name=Black Tile
+tile.ms13.floortile.red.name=Red Tile
+tile.ms13.floortile.green.name=Green Tile
+tile.ms13.floortile.blue.name=Blue Tile
+tile.ms13.floortile.chunkPosYellow.name=Yellow Tile
+tile.ms13.floortile.purple.name=Purple Tile
+tile.ms13.floortile.darkred.name=Dark Red Tile
+tile.ms13.floortile.darkgreen.name=Dark Green Tile
+tile.ms13.floortile.darkblue.name=Dark Blue Tile
+tile.ms13.floortile.brown.name=Brown Tile
+
+tile.ms13.stationBlockFree.name=Station Plating
+tile.ms13.stationBlock.name=Station Hull Plating (Welded)
+tile.ms13.stationReinforcedFree.name=Reinforced Station Plating
+tile.ms13.stationReinforced.name=Reinforced Station Plating (Welded)
+tile.ms13.stationGlass.name=Reinforced Glass
+tile.ms13.airlockAssembly.name=Airlock Assembly Component
+tile.ms13.airlockFrame.name=Airlock Frame
+tile.ms13.lightbulb.name=Light Bulb
+tile.ms13.ladder.name=Ladder
+tile.ms13.tempTeleport.name=TELEPORTAL
+
+item.ms13.screwdriver.name=Screwdriver
+item.ms13.weldgun.name=Welding Gun
+item.ms13.idCard.name=ID Card
+item.ms13.antagonistCard.name=Antagonist Card
+item.ms13.wirecutters.name=Wirecutters
+item.ms13.soldergun.name=Soldering Gun
+item.ms13.multitool.name=Multitool
+item.ms13.crowbar.name=Crowbar
+item.ms13.airlockdoor.name=Airlock
+item.ms13.pantsGeneric.name=Pants
+item.ms13.shirtGeneric.name=Shirt
+item.ms13.glovesGeneric.name=Gloves
+item.ms13.shoesGeneric.name=Shoes
+item.ms13.bootsGeneric.name=Boots
+
+container.airlocksetup.name=What access key should this airlock use?
+
+itemGroup.mineStation=MineStation 13

@@ -34,10 +34,10 @@ public class ItemIdCard extends Item {
     {
 		NBTTagCompound nbt = itemStack.stackTagCompound;
 		if (nbt == null||!nbt.hasKey("idName")) {
-			return itemStack.getDisplayName(); //super.getItemDisplayName(itemStack);
+			return super.getItemStackDisplayName(itemStack);
 		}
 		
-		return nbt.getString("idName")+"'s "+ itemStack.getDisplayName(); //super.getItemDisplayName(itemStack);
+		return nbt.getString("idName")+"'s "+ super.getItemStackDisplayName(itemStack); //super.getItemDisplayName(itemStack);
     }
 	
 	@Override

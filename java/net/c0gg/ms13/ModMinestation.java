@@ -36,7 +36,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemColored;
+import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -76,7 +78,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 //import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid="ms13", name=ModMinestation.nameFancy, version="0")
@@ -93,7 +94,7 @@ public class ModMinestation {
 	static final RoundManager roundManager = new RoundManager();
 	
 	//Creative tab
-	static final CreativeTabs tabSpacestation = new CreativeTabs("tabMineStation") {
+	static final CreativeTabs tabSpacestation = new CreativeTabs("mineStation") {
         @Override
 		public ItemStack getIconItemStack() {
         	return new ItemStack(blockStationBlock,1,0);
@@ -148,16 +149,26 @@ public class ModMinestation {
 	//I honestly don't know what goes here...It does tend to complain about anonymous items if you don't register items and blocks here, though.
 	@EventHandler
 	public void preload(FMLPreInitializationEvent event) {
+
 		//Block registry
-    	registerBlock(blockAsteroid,"asteroid",null);
-    	registerBlock(blockStationBlockFree,"stationBlockFree","Station Hull Block");
+		blockAsteroid.setBlockName("ms13.asteroid");
+		GameRegistry.registerBlock(blockAsteroid,null,"asteroid");
+		GameRegistry.registerItem(new ItemMultiTexture(blockAsteroid,blockAsteroid,BlockAsteroid.subTypes),"asteroid");
+		
+		//Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile, true)).setBlockNames(BlockFloorTile.subTypes);
+		
+		blockFloorTile.setBlockName("ms13.floortile");
+		blockFloorTile.setBlockTextureName("ms13:floortile");
+		GameRegistry.registerBlock(blockFloorTile,null,"floortile");
+		GameRegistry.registerItem((new ItemColored(blockFloorTile, true)).func_150943_a(BlockFloorTile.subTypes),"floortile");
+		
+		registerBlock(blockStationBlockFree,"stationBlockFree","Station Hull Block");
     	registerBlock(blockStationBlock,"stationBlock","Station Hull Block (Welded)");
     	registerBlock(blockStationReinforcedFree,"stationReinforcedFree","Reinforced Station Hull Block");
     	registerBlock(blockStationReinforced,"stationReinforced","Reinforced Station Hull Block (Welded)");
     	registerBlock(blockStationGlass,"stationGlass","Reinforced Glass");
     	registerBlock(blockAirlockAssembly,"airlockAssembly","Airlock Assembly Component");
     	registerBlock(blockAirlockFrame,"airlockFrame","Airlock Frame");
-    	registerBlock(blockFloorTile,"floortile",null);
     	registerBlock(blockLightbulb,"lightbulb","Light Bulb");
     	registerBlock(blockLadder,"ladder","Ladder");
     	registerBlock(blockTeleport,"tempTeleport","TELEPORTAL");
@@ -178,15 +189,10 @@ public class ModMinestation {
     	registerItem(itemGloves,"glovesGeneric","Gloves");
     	registerItem(itemShoes,"shoesGeneric","Shoes");
     	registerItem(itemBoots,"bootsGeneric","Boots");
-
 	}
 	
     @EventHandler
-    public void load(FMLInitializationEvent event) {    	
-    	//TODO see if this should go somewhere else TODO fix that crap
-    	//Item.itemsList[blockAsteroid.blockID]=new ItemMultiTextureTile(blockAsteroid.blockID-256,blockAsteroid,BlockAsteroid.subTypes);//.setUnlocalizedName(blockAsteroid.getUnlocalizedName2());
-    	//Item.itemsList[blockFloorTile.blockID]= (new ItemColored(blockFloorTile.blockID - 256, true)).setBlockNames(BlockFloorTile.subTypes);
-    	
+    public void load(FMLInitializationEvent event) {
     	//Register player textures.
     	if (event.getSide()==Side.CLIENT) {
 	    	ItemClothing.loadImages();
@@ -194,7 +200,6 @@ public class ModMinestation {
 	    }
     	
     	//Dimension registry
-    	
     	DimensionManager.registerProviderType(dimensionIdAsteroid,WorldProviderAsteroid.class,false);
     	DimensionManager.registerDimension(dimensionIdAsteroid,dimensionIdAsteroid);
     	
@@ -208,7 +213,7 @@ public class ModMinestation {
     	
     	//Language registry
     	
-    	LanguageRegistry langReg = LanguageRegistry.instance();
+    	//LanguageRegistry langReg = LanguageRegistry.instance();
     	//langReg.addStringLocalization("itemGroup.tabMineStation",nameFancy);
     	//langReg.addStringLocalization("container.airlocksetup","What access key should this airlock use?");
     	
@@ -256,25 +261,20 @@ public class ModMinestation {
     	new AtmosZoner(MinecraftServer.getServer().worldServerForDimension(dimensionIdAsteroid));
     }
     
-    //TODO Should fancy names be stored in language files in future?
     public static void registerBlock(Block b, String name, String fancyName) {
-    	b.setBlockName("ms13:"+name);
+    	b.setBlockName("ms13."+name);
 	    b.setBlockTextureName("ms13:"+name);
     	
-    	if (fancyName!=null) {
-    		LanguageRegistry.instance().addStringLocalization(b.getUnlocalizedName()+".name",fancyName);
-    	}
-    	
-    	GameRegistry.registerBlock(b,b.getUnlocalizedName());
+    	GameRegistry.registerBlock(b,"ms13."+name);
     }
     
     public static void registerItem(Item i,String name, String fancyName) {
-	    i.setUnlocalizedName("ms13:"+name);
+	    i.setUnlocalizedName("ms13."+name);
 	    i.setTextureName("ms13:"+name);
     	
-    	if (fancyName!=null) {
+    	/*if (fancyName!=null) {
     		LanguageRegistry.instance().addStringLocalization(i.getUnlocalizedName()+".name",fancyName);
-    	}
+    	}*/
     	
     	GameRegistry.registerItem(i,i.getUnlocalizedName());
     }
