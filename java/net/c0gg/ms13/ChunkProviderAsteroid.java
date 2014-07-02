@@ -1,5 +1,7 @@
 package net.c0gg.ms13;
 
+import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.DUNGEON;
+
 import java.util.List;
 import java.util.Random;
 
@@ -17,6 +19,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
+import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraftforge.common.*;
 import cpw.mods.fml.common.eventhandler.Event.*;
 import net.minecraftforge.event.terraingen.*;
@@ -40,9 +43,11 @@ public class ChunkProviderAsteroid implements IChunkProvider
     double[] noiseData5;
     int[][] field_73203_h = new int[32][32];
     private static final String __OBFID = "CL_00000397";
+    
 
     public ChunkProviderAsteroid(World par1World, long par2)
     {
+    	
         this.endWorld = par1World;
         this.endRNG = new Random(par2);
         this.noiseGen1 = new NoiseGeneratorOctaves(this.endRNG, 16);
@@ -106,7 +111,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
                                 if (d15 > 0.0D)
                                 {
-                                    block = ModMinestation.blockAsteroid;
+                                    block = ModMinestation.blockStationGlass;
                                 }
 
                                 p_147420_3_[j2] = block;
@@ -218,6 +223,8 @@ public class ChunkProviderAsteroid implements IChunkProvider
         return chunk;
     }
 
+    
+
     /**
      * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
      * size.
@@ -255,7 +262,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
                     d2 = 1.0D;
                 }
 
-                double d3 = this.noiseData5[l1] / 8000.0D;
+                double d3 = this.noiseData5[l1] / 4000.0D; //8000
 
                 if (d3 < 0.0D)
                 {
@@ -305,9 +312,9 @@ public class ChunkProviderAsteroid implements IChunkProvider
                         d6 *= -1.0D;
                     }
 
-                    double d7 = this.noiseData2[k1] / 512.0D;
-                    double d8 = this.noiseData3[k1] / 512.0D;
-                    double d9 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+                    double d7 = this.noiseData2[k1] / 256.0D; //512
+                    double d8 = this.noiseData3[k1] / 256.0D;
+                    double d9 = (this.noiseData1[k1] / 20.0D + 1.0D) / 2.0D; //First was 10
 
                     if (d9 < 0.0D)
                     {
@@ -370,14 +377,16 @@ public class ChunkProviderAsteroid implements IChunkProvider
     }
 
     /**
-     * Populates chunk with ores etc etc
+     * Populates chunk with ores and //secret rooms ~Pdan
      */
     public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
     {
         BlockFalling.fallInstantly = true;
 
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
-
+        int k1=0;
+        int l1=0;
+        int i2=0;
         int k = par2 * 16;
         int l = par3 * 16;
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(k + 16, l + 16);
@@ -386,6 +395,15 @@ public class ChunkProviderAsteroid implements IChunkProvider
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 
         BlockFalling.fallInstantly = false;
+        boolean flag = false;
+        boolean doGen = TerrainGen.populate(par1IChunkProvider, endWorld, endRNG, par2, par3, flag, DUNGEON);
+        for (k1 = 0; doGen && k1 < 12; ++k1)
+        {
+            l1 = k + this.endRNG.nextInt(16) + 80;
+            i2 = this.endRNG.nextInt(256);
+            int j2 = l + this.endRNG.nextInt(16) + 80;
+            (new GenStructureAsteroidRoom()).generate(this.endWorld, this.endRNG, k1, l1, i2);
+        }
     }
 
     /**
