@@ -1,5 +1,8 @@
 package net.c0gg.ms13;
 
+import io.netty.buffer.Unpooled;
+
+import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -11,11 +14,17 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLEventChannel;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 
 
@@ -338,7 +347,38 @@ public class PacketHandlerMinestation /*implements IPacketHandler {
 	}
 }*/
 {
-
+	private enum Server2ClientSubtypes {
+		ATMOSDBG_START,
+		ATMOSDBG_STOP,
+		ATMOSDBG_SET,
+		ATMOSDBG_SETMANY, //unused?
+		ATMOSDBG_CLEAR,
+		ATMOSDBG_CLEARZONE,
+		ATMOSDBG_TRANSFER
+	}
+	
+	private enum Client2ServerSubtypes {
+		GRAB,
+		AIRLOCKSETUP,
+		HACK
+	}
+	
+	private static PacketHandlerMinestation instance;
+	private static String CHANNEL_ID = "ms13";
+	
+	private FMLEventChannel channel;
+	
+	public PacketHandlerMinestation() {
+		channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL_ID);
+		channel.register(this);
+		
+		instance=this;
+	}
+	
+	public static void svSendAtmosDebugToggle(EntityPlayer player) {
+		// TODO Auto-generated method stub
+	}
+	
 	public static void svSendAtmosDebugSetPos(int hashCode, ChunkPosition pos) {
 		// TODO Auto-generated method stub
 		
@@ -358,26 +398,78 @@ public class PacketHandlerMinestation /*implements IPacketHandler {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public static void clSendAirlockSetup(TileEntityAirlock entityAirlock,
-			String text) {
-		// TODO Auto-generated method stub
+	
+	public static void clSendPlyGrab(Entity grabEnt) {
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
+		buffer.writeInt(Client2ServerSubtypes.GRAB.ordinal());
+		
+		int id=-1;
+		if (grabEnt!=null) {
+			id=grabEnt.getEntityId();
+		}
+		
+		buffer.writeInt(id);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		instance.channel.sendToServer(packet);
+	}
+
+	public static void clSendAirlockSetup(TileEntityAirlock airlock, String key) {
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
+		
+		buffer.writeInt(Client2ServerSubtypes.AIRLOCKSETUP.ordinal());
+		
+		buffer.writeInt(airlock.xCoord);
+		buffer.writeInt(airlock.yCoord);
+		buffer.writeInt(airlock.zCoord);
+		
+		try {
+			buffer.writeStringToBuffer(key);
+		} catch (IOException exception) {
+			//string was too long, bail out
+			return;
+		}
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		instance.channel.sendToServer(packet);
 	}
 
 	public static void clSendHack(Hackable target, int i) {
-		// TODO Auto-generated method stub
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
-	}
-
-	public static void clSendPlyGrab(Entity entity) {
-		// TODO Auto-generated method stub
+		buffer.writeInt(Client2ServerSubtypes.HACK.ordinal());
 		
+		if (target instanceof TileEntity) {
+			TileEntity targetEnt = (TileEntity)target;
+			buffer.writeByte((byte)0);
+			buffer.writeInt(targetEnt.xCoord);
+			buffer.writeInt(targetEnt.yCoord);
+			buffer.writeInt(targetEnt.zCoord);
+		} else if (target instanceof Entity) {
+			Entity targetEnt = (Entity)target;
+			buffer.writeByte((byte)1);
+			buffer.writeInt(targetEnt.getEntityId());
+			buffer.writeInt(0);
+			buffer.writeInt(0);
+		} else {
+			//Invalid hackable
+			return;
+		}
+		
+		buffer.writeByte((byte)i);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		instance.channel.sendToServer(packet);
 	}
-
-	public static void svSendAtmosDebugToggle(EntityPlayer player) {
-		// TODO Auto-generated method stub
+	
+	@SubscribeEvent
+	public void svReceiveHandler(FMLNetworkEvent.ServerCustomPacketEvent event) {
 		
 	}
 	
+	@SubscribeEvent
+	public void clReceiveHandler(FMLNetworkEvent.ClientCustomPacketEvent event) {
+		
+	}
 }
