@@ -1,12 +1,28 @@
- {
-  "music.menu": {
-    "category": "music",
-    "sounds": [
-      {
-        "name": "music/menu/major_tom_hadfield",
-        "stream": true
-      }
-      
-    ]
-  }
+{
+	"step.stationMetal": {
+		"category": "neutral",
+		"sounds": [
+			"step/stationMetal1",
+			"step/stationMetal2",
+			"step/stationMetal3",
+			"step/stationMetal4"
+		]
+	},
+	"dig.stationMetal": {
+		"category": "neutral",
+		"sounds": [
+			"dig/stationMetal"
+		]
+	},
+
+
+	"music.menu": {
+		"category": "music",
+		"sounds": [
+			{
+				"name": "music/menu/major_tom_hadfield",
+				"stream": true
+			}
+		]
+	}
 }
