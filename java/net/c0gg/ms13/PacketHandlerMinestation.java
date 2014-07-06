@@ -368,6 +368,9 @@ public class PacketHandlerMinestation /*implements IPacketHandler {
 	
 	private FMLEventChannel channel;
 	
+	//List of players using atmos debugging. Only used on server.
+	private static ArrayList<EntityPlayerMP> debuggingPlayers= new ArrayList<EntityPlayerMP>();
+	
 	public PacketHandlerMinestation() {
 		channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL_ID);
 		channel.register(this);
@@ -375,28 +378,78 @@ public class PacketHandlerMinestation /*implements IPacketHandler {
 		instance=this;
 	}
 	
-	public static void svSendAtmosDebugToggle(EntityPlayer player) {
-		// TODO Auto-generated method stub
+	public static void svSendAtmosDebugToggle(EntityPlayerMP target) {
+		if (debuggingPlayers.remove(target)) {
+			PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
+			
+			buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_STOP.ordinal());
+			
+			FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+			instance.channel.sendTo(packet,target);
+		} else {
+			debuggingPlayers.add(target);
+			
+			PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
+			
+			buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_START.ordinal());
+			
+			FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+			instance.channel.sendTo(packet,target);
+		}
 	}
 	
-	public static void svSendAtmosDebugSetPos(int hashCode, ChunkPosition pos) {
-		// TODO Auto-generated method stub
+	public static void svSendAtmosDebugSetPos(int zonehash, ChunkPosition pos) {
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
+		buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_SET.ordinal());
+		buffer.writeInt(zonehash);
+		buffer.writeInt(pos.chunkPosX);
+		buffer.writeInt(pos.chunkPosY);
+		buffer.writeInt(pos.chunkPosZ);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		for (EntityPlayerMP ply:debuggingPlayers) {
+			instance.channel.sendTo(packet, ply);
+		}
 	}
 
 	public static void svSendAtmosDebugClearPos(ChunkPosition pos) {
-		// TODO Auto-generated method stub
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
+		buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_CLEAR.ordinal());
+		buffer.writeInt(pos.chunkPosX);
+		buffer.writeInt(pos.chunkPosY);
+		buffer.writeInt(pos.chunkPosZ);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		for (EntityPlayerMP ply:debuggingPlayers) {
+			instance.channel.sendTo(packet, ply);
+		}
 	}
 
-	public static void svSendAtmosDebugClearZone(int hashCode) {
-		// TODO Auto-generated method stub
+	public static void svSendAtmosDebugClearZone(int zonehash) {
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
+		buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_CLEARZONE.ordinal());
+		buffer.writeInt(zonehash);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		for (EntityPlayerMP ply:debuggingPlayers) {
+			instance.channel.sendTo(packet, ply);
+		}
 	}
 
-	public static void svSendAtmosDebugTransfer(int hashCode, int hashCode2) {
-		// TODO Auto-generated method stub
+	public static void svSendAtmosDebugTransfer(int zonehash1, int zonehash2) {
+		PacketBuffer buffer=new PacketBuffer(Unpooled.buffer());
 		
+		buffer.writeInt(Server2ClientSubtypes.ATMOSDBG_TRANSFER.ordinal());
+		buffer.writeInt(zonehash1);
+		buffer.writeInt(zonehash2);
+		
+		FMLProxyPacket packet = new FMLProxyPacket(buffer,CHANNEL_ID);
+		for (EntityPlayerMP ply:debuggingPlayers) {
+			instance.channel.sendTo(packet, ply);
+		}
 	}
 	
 	public static void clSendPlyGrab(Entity grabEnt) {

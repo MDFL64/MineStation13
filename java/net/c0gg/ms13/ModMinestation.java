@@ -342,7 +342,7 @@ class CommandAtmos extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] astring) {
-		if(sender instanceof EntityPlayer) {
+		if(sender instanceof EntityPlayerMP) { //TODO not sure if okay to force MP version of player, will it work in SP?
 			EntityPlayer player = (EntityPlayer)sender;
 			AtmosZoner atmos = AtmosZoner.getForWorld(player.worldObj);
 			if (astring.length>0&&atmos!=null) {
@@ -352,7 +352,7 @@ class CommandAtmos extends CommandBase {
 				} else if (astring[0].equals("get")) {
 					player.addChatMessage(new ChatComponentText(atmos.testGet(pos)));
 				} else if (astring[0].equals("debug")) {
-					PacketHandlerMinestation.svSendAtmosDebugToggle((EntityPlayer)player); //Yolo ~Pdan
+					PacketHandlerMinestation.svSendAtmosDebugToggle((EntityPlayerMP)player); //Yolo ~Pdan
 				} else {
 					player.addChatMessage(new ChatComponentText("Function '"+astring[0]+"' does not exist. Valid functions are: put get debug"));
 				}
