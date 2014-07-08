@@ -21,18 +21,19 @@ This is what I got done:
 
 [See the showcase!](http://imgur.com/a/QG0lr#0)
 
-How to Install (OUTDATED!)
+How to Install (Eclipse)
 --------------
-1. Clone it.
-2. Download forge 9.11.1.965-src to a seperate directory.
-3. Run the forge install script.
-4. Copy the forge folder you downloaded over the one in the repo.
-5. ???
-6. Profit!
+1. Download the correct forge version: [forge-10.12.2.1121-src](http://adf.ly/673885/http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.2-10.12.2.1121/forge-1.7.2-10.12.2.1121-src.zip).
+2. Install forge using the [Initial Setup Instructions](http://www.minecraftforge.net/forum/index.php?topic=14048.0).
+3. You can delete FORGE/src/main/
+4. Clone the repository to FORGE/src/
+5. Run eclipse with FORGE/eclipse/ as the workspace.
+6. Add FORGE/src/MineStation13/java and FORGE/src/MineStation13/resources as source folders in eclipse.
+7. ???
+8. Profit!
 
-File Structure (ALSO OUTDATED!)
+File Structure
 --------------
-* Eclipse Workspace: forge/mcp/eclipse
-* Source: forge/mcp/src/minecraft/net/c0gg/ms13
-* Assets: forge/mcp/src/minecraft/assets/ms13
-
+* Eclipse Workspace: FORGE/eclipse/
+* Source: FORGE/src/MineStation13/java/net/c0gg/ms13/
+* Assets: FORGE/src/MineStation13/resources/assets/ms13/
