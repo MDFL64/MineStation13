@@ -21,7 +21,7 @@ This is what I got done:
 
 [See the showcase!](http://imgur.com/a/QG0lr#0)
 
-How to Install
+How to Install (OUTDATED!)
 --------------
 1. Clone it.
 2. Download forge 9.11.1.965-src to a seperate directory.
@@ -30,7 +30,7 @@ How to Install
 5. ???
 6. Profit!
 
-File Structure
+File Structure (ALSO OUTDATED!)
 --------------
 * Eclipse Workspace: forge/mcp/eclipse
 * Source: forge/mcp/src/minecraft/net/c0gg/ms13
