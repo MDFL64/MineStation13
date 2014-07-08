@@ -287,8 +287,8 @@ public class ModMinestation {
     	if (event.entity instanceof EntityPlayer) {
     		EntityPlayer ply = (EntityPlayer)event.entity;
     		
-    		ply.inventory = new MsInvInventory(ply);
-    		ply.inventoryContainer=new MsInvContainer(ply);
+    		//ply.inventory = new MsInvInventory(ply);
+    		//ply.inventoryContainer=new MsInvContainer(ply);
     		ply.openContainer=ply.inventoryContainer;
     	}
     }

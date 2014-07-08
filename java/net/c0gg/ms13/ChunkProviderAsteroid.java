@@ -1,12 +1,15 @@
 package net.c0gg.ms13;
 
+import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.DUNGEON;
+
 import java.util.List;
 import java.util.Random;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSand;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
@@ -14,100 +17,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.feature.WorldGenerator;
-
+import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraftforge.common.*;
+import cpw.mods.fml.common.eventhandler.Event.*;
 import net.minecraftforge.event.terraingen.*;
 
 public class ChunkProviderAsteroid implements IChunkProvider
 {
-
-	public ChunkProviderAsteroid(World worldObj, long seed) {
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public boolean chunkExists(int var1, int var2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Chunk provideChunk(int var1, int var2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Chunk loadChunk(int var1, int var2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void populate(IChunkProvider var1, int var2, int var3) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean saveChunks(boolean var1, IProgressUpdate var2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean unloadQueuedChunks() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean canSave() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String makeString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getPossibleCreatures(EnumCreatureType var1, int var2, int var3,
-			int var4) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ChunkPosition func_147416_a(World var1, String var2, int var3,
-			int var4, int var5) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getLoadedChunkCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void recreateStructures(int var1, int var2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void saveExtraData() {
-		// TODO Auto-generated method stub
-		
-	}
-}
-/*{
     private Random endRNG;
     private NoiseGeneratorOctaves noiseGen1;
     private NoiseGeneratorOctaves noiseGen2;
@@ -116,8 +34,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
     public NoiseGeneratorOctaves noiseGen5;
     private World endWorld;
     private double[] densities;
-
-    /** The biomes that are used to generate the chunk *
+    /** The biomes that are used to generate the chunk */
     private BiomeGenBase[] biomesForGeneration;
     double[] noiseData1;
     double[] noiseData2;
@@ -125,11 +42,12 @@ public class ChunkProviderAsteroid implements IChunkProvider
     double[] noiseData4;
     double[] noiseData5;
     int[][] field_73203_h = new int[32][32];
+    private static final String __OBFID = "CL_00000397";
     
-    private WorldGenerator oreCopperGen;
 
     public ChunkProviderAsteroid(World par1World, long par2)
     {
+    	
         this.endWorld = par1World;
         this.endRNG = new Random(par2);
         this.noiseGen1 = new NoiseGeneratorOctaves(this.endRNG, 16);
@@ -138,22 +56,22 @@ public class ChunkProviderAsteroid implements IChunkProvider
         this.noiseGen4 = new NoiseGeneratorOctaves(this.endRNG, 10);
         this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
 
-        NoiseGeneratorOctaves[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
+        NoiseGenerator[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
         noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.endRNG, noiseGens);
-        this.noiseGen1 = noiseGens[0];
-        this.noiseGen2 = noiseGens[1];
-        this.noiseGen3 = noiseGens[2];
-        this.noiseGen4 = noiseGens[3];
-        this.noiseGen5 = noiseGens[4];
-   }
+        this.noiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
+        this.noiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
+        this.noiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
+        this.noiseGen4 = (NoiseGeneratorOctaves)noiseGens[3];
+        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
+    }
 
-    public void generateTerrain(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+    public void func_147420_a(int p_147420_1_, int p_147420_2_, Block[] p_147420_3_, BiomeGenBase[] p_147420_4_)
     {
         byte b0 = 2;
         int k = b0 + 1;
         byte b1 = 33;
         int l = b0 + 1;
-        this.densities = this.initializeNoiseField(this.densities, par1 * b0, 0, par2 * b0, k, b1, l);
+        this.densities = this.initializeNoiseField(this.densities, p_147420_1_ * b0, 0, p_147420_2_ * b0, k, b1, l);
 
         for (int i1 = 0; i1 < b0; ++i1)
         {
@@ -189,15 +107,14 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
                             for (int k2 = 0; k2 < 8; ++k2)
                             {
-                                int l2 = 0;
+                                Block block = null;
 
                                 if (d15 > 0.0D)
                                 {
-                                	//Block id
-                                    l2 = ModMinestation.blockAsteroid.blockID;
+                                    block = ModMinestation.blockStationGlass;
                                 }
 
-                                par3ArrayOfByte[j2] = (byte)l2;
+                                p_147420_3_[j2] = block;
                                 j2 += short1;
                                 d15 += d16;
                             }
@@ -216,11 +133,11 @@ public class ChunkProviderAsteroid implements IChunkProvider
         }
     }
 
-    public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+    public void func_147421_b(int p_147421_1_, int p_147421_2_, Block[] p_147421_3_, BiomeGenBase[] p_147421_4_)
     {
-        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, par1, par2, par3ArrayOfByte, par4ArrayOfBiomeGenBase);
+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147421_1_, p_147421_2_, p_147421_3_, p_147421_4_);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Result.DENY) return; 
+        if (event.getResult() == Result.DENY) return;
 
         for (int k = 0; k < 16; ++k)
         {
@@ -228,44 +145,47 @@ public class ChunkProviderAsteroid implements IChunkProvider
             {
                 byte b0 = 1;
                 int i1 = -1;
-                byte b1 = (byte)Block.whiteStone.blockID; //Wat? ~Pdan
-                byte b2 = (byte)Block.whiteStone.blockID;
-          
+                Block block = ModMinestation.blockAsteroid;
+                Block block1 = ModMinestation.blockAsteroid;
+
                 for (int j1 = 127; j1 >= 0; --j1)
                 {
                     int k1 = (l * 16 + k) * 128 + j1;
-                    byte b3 = par3ArrayOfByte[k1];
+                    Block block2 = p_147421_3_[k1];
 
-                    if (b3 == 0)
+                    if (block2 != null && block2.getMaterial() != Material.air)
+                    {
+                        if (block2 == Blocks.stone)
+                        {
+                            if (i1 == -1)
+                            {
+                                if (b0 <= 0)
+                                {
+                                    block = null;
+                                    block1 = ModMinestation.blockAsteroid;
+                                }
+
+                                i1 = b0;
+
+                                if (j1 >= 0)
+                                {
+                                    p_147421_3_[k1] = block;
+                                }
+                                else
+                                {
+                                    p_147421_3_[k1] = block1;
+                                }
+                            }
+                            else if (i1 > 0)
+                            {
+                                --i1;
+                                p_147421_3_[k1] = block1;
+                            }
+                        }
+                    }
+                    else
                     {
                         i1 = -1;
-                    }
-                    else if (b3 == Block.stone.blockID) //Wat ~Pdan
-                    {
-                        if (i1 == -1)
-                        {
-                            if (b0 <= 0)
-                            {
-                                b1 = 0;
-                                b2 = (byte)Block.whiteStone.blockID;
-                            }
-
-                            i1 = b0;
-
-                            if (j1 >= 0)
-                            {
-                                par3ArrayOfByte[k1] = b1;
-                            }
-                            else
-                            {
-                                par3ArrayOfByte[k1] = b2;
-                            }
-                        }
-                        else if (i1 > 0)
-                        {
-                            --i1;
-                            par3ArrayOfByte[k1] = b2;
-                        }
                     }
                 }
             }
@@ -274,7 +194,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * loads or generates the chunk at the chunk location specified
-     *
+     */
     public Chunk loadChunk(int par1, int par2)
     {
         return this.provideChunk(par1, par2);
@@ -283,29 +203,32 @@ public class ChunkProviderAsteroid implements IChunkProvider
     /**
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
      * specified chunk from the map seed and chunk seed
-     *
+     */
     public Chunk provideChunk(int par1, int par2)
     {
         this.endRNG.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
-        byte[] abyte = new byte[32768];
+        Block[] ablock = new Block[32768];
         this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
-        this.generateTerrain(par1, par2, abyte, this.biomesForGeneration);
-        Chunk chunk = new Chunk(this.endWorld, abyte, par1, par2);
-        byte[] abyte1 = chunk.getBiomeArray();
+        this.func_147420_a(par1, par2, ablock, this.biomesForGeneration);
+        this.func_147421_b(par1, par2, ablock, this.biomesForGeneration);
+        Chunk chunk = new Chunk(this.endWorld, ablock, par1, par2);
+        byte[] abyte = chunk.getBiomeArray();
 
-        for (int k = 0; k < abyte1.length; ++k)
+        for (int k = 0; k < abyte.length; ++k)
         {
-            abyte1[k] = (byte)this.biomesForGeneration[k].biomeID;
+            abyte[k] = (byte)this.biomesForGeneration[k].biomeID;
         }
 
         chunk.generateSkylightMap();
         return chunk;
     }
 
+    
+
     /**
      * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
      * size.
-     *
+     */
     private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
     {
         ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
@@ -339,7 +262,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
                     d2 = 1.0D;
                 }
 
-                double d3 = this.noiseData5[l1] / 8000.0D;
+                double d3 = this.noiseData5[l1] / 4000.0D; //8000
 
                 if (d3 < 0.0D)
                 {
@@ -389,9 +312,9 @@ public class ChunkProviderAsteroid implements IChunkProvider
                         d6 *= -1.0D;
                     }
 
-                    double d7 = this.noiseData2[k1] / 512.0D;
-                    double d8 = this.noiseData3[k1] / 512.0D;
-                    double d9 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+                    double d7 = this.noiseData2[k1] / 256.0D; //512
+                    double d8 = this.noiseData3[k1] / 256.0D;
+                    double d9 = (this.noiseData1[k1] / 20.0D + 1.0D) / 2.0D; //First was 10
 
                     if (d9 < 0.0D)
                     {
@@ -447,45 +370,61 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Checks to see if a chunk exists at x, y
-     *
+     */
     public boolean chunkExists(int par1, int par2)
     {
         return true;
     }
 
     /**
-     * Populates chunk with ores etc etc
-     *
+     * Populates chunk with ores and //secret rooms ~Pdan
+     */
     public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
     {
-        BlockSand.fallInstantly = true;
+        BlockFalling.fallInstantly = true;
 
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
-
+        int k1=0;
+        int l1=0;
+        int i2=0;
         int k = par2 * 16;
         int l = par3 * 16;
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(k + 16, l + 16);
         biomegenbase.decorate(this.endWorld, this.endWorld.rand, k, l);
-
+        
+        boolean flag = false;
+        boolean doGen = TerrainGen.populate(par1IChunkProvider, endWorld, endRNG, par2, par3, flag, DUNGEON);
+        for (k1 = 0; doGen && k1 < 12; ++k1)
+        {
+            l1 = k + this.endRNG.nextInt(16) + 80;
+            i2 = this.endRNG.nextInt(256);
+            int j2 = l + this.endRNG.nextInt(16) + 80;
+            (new GenStructureAsteroidRoom()).generate(this.endWorld, this.endRNG, k1, l1, i2);
+        }
+        
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 
-        BlockSand.fallInstantly = false;
+        BlockFalling.fallInstantly = false;
     }
 
     /**
      * Two modes of operation: if passed true, save all Chunks in one go.  If passed false, save up to two chunks.
      * Return true if all chunks have been saved.
-     *
+     */
     public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
     {
         return true;
     }
 
-    public void func_104112_b() {}
+    /**
+     * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
+     * unimplemented.
+     */
+    public void saveExtraData() {}
 
     /**
      * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     *
+     */
     public boolean unloadQueuedChunks()
     {
         return false;
@@ -493,7 +432,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Returns if the IChunkProvider supports saving.
-     *
+     */
     public boolean canSave()
     {
         return true;
@@ -501,7 +440,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Converts the instance data to a readable string.
-     *
+     */
     public String makeString()
     {
         return "RandomLevelSource";
@@ -509,17 +448,14 @@ public class ChunkProviderAsteroid implements IChunkProvider
 
     /**
      * Returns a list of creatures of the specified type that can spawn at the given location.
-     *
+     */
     public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
     {
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(par2, par4);
-        return biomegenbase == null ? null : biomegenbase.getSpawnableList(par1EnumCreatureType);
+        return biomegenbase.getSpawnableList(par1EnumCreatureType);
     }
 
-    /**
-     * Returns the location of the closest structure of the specified type. If not found returns null.
-     *
-    public ChunkPosition findClosestStructure(World par1World, String par2Str, int par3, int par4, int par5)
+    public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
     {
         return null;
     }
@@ -530,8 +466,4 @@ public class ChunkProviderAsteroid implements IChunkProvider
     }
 
     public void recreateStructures(int par1, int par2) {}
-    
-	public void saveExtraData() {
-		//DO nothing
-	}
-}*/
+}
