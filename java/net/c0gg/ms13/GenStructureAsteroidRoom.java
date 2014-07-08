@@ -93,7 +93,7 @@ public class GenStructureAsteroidRoom extends WorldGenerator
                 {
                     if (l1 < 3)
                     {
-                        label101:
+                        //label101:
                         {
                             i2 = par3 + par2Random.nextInt(l * 2 + 1) - l;
                             int j2 = par5 + par2Random.nextInt(i1 * 2 + 1) - i1;

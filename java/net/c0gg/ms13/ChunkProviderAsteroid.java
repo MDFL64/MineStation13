@@ -391,10 +391,7 @@ public class ChunkProviderAsteroid implements IChunkProvider
         int l = par3 * 16;
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(k + 16, l + 16);
         biomegenbase.decorate(this.endWorld, this.endWorld.rand, k, l);
-
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
-
-        BlockFalling.fallInstantly = false;
+        
         boolean flag = false;
         boolean doGen = TerrainGen.populate(par1IChunkProvider, endWorld, endRNG, par2, par3, flag, DUNGEON);
         for (k1 = 0; doGen && k1 < 12; ++k1)
@@ -404,6 +401,10 @@ public class ChunkProviderAsteroid implements IChunkProvider
             int j2 = l + this.endRNG.nextInt(16) + 80;
             (new GenStructureAsteroidRoom()).generate(this.endWorld, this.endRNG, k1, l1, i2);
         }
+        
+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
+
+        BlockFalling.fallInstantly = false;
     }
 
     /**
