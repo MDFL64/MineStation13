@@ -193,6 +193,9 @@ public class ModMinestation {
 	
     @EventHandler
     public void load(FMLInitializationEvent event) {
+    	//Init networking
+    	new PacketHandlerMinestation();
+    	
     	//Register player textures.
     	if (event.getSide()==Side.CLIENT) {
 	    	ItemClothing.loadImages();
