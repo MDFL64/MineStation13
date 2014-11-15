@@ -35,5 +35,6 @@ How to Install (Eclipse)
 File Structure
 --------------
 * Eclipse Workspace: FORGE/eclipse/
-* Source: FORGE/src/MineStation13/java/net/c0gg/ms13/
+* Source: FORGE/src/MineStation13/java/rocks/cogg/ms13/
 * Assets: FORGE/src/MineStation13/resources/assets/ms13/
+* Misc/Promotional Stuff: FORGE/src/MineStation13/misc/
