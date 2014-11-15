@@ -1,18 +1,18 @@
 #Exclude everything
-forge/**
+#forge/**
 
 #We need to 'walk up' to the directories we will allow.
-!forge/mcp/
-!forge/mcp/src/
-!forge/mcp/src/minecraft/
+#!forge/mcp/
+#!forge/mcp/src/
+#!forge/mcp/src/minecraft/
 
 #Allow MS13 source
-!forge/mcp/src/minecraft/net/
-!forge/mcp/src/minecraft/net/c0gg/
-!forge/mcp/src/minecraft/net/c0gg/ms13/
-!forge/mcp/src/minecraft/net/c0gg/ms13/**
+#!forge/mcp/src/minecraft/net/
+#!forge/mcp/src/minecraft/net/c0gg/
+#!forge/mcp/src/minecraft/net/c0gg/ms13/
+#!forge/mcp/src/minecraft/net/c0gg/ms13/**
 
 #Allow MS13 assets
-!/forge/mcp/src/minecraft/assets/
-!/forge/mcp/src/minecraft/assets/ms13
-!/forge/mcp/src/minecraft/assets/ms13/**
+#!/forge/mcp/src/minecraft/assets/
+#!/forge/mcp/src/minecraft/assets/ms13
+#!/forge/mcp/src/minecraft/assets/ms13/**
