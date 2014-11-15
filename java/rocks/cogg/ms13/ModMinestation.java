@@ -230,7 +230,7 @@ public class ModMinestation {
     	
     	//Entity registry
     	EntityRegistry.registerModEntity(EntityMinestationMob.class,"ms13_mob",0, this, 80, 1, true);
-    	EntityRegistry.addSpawn(EntityMinestationMob.class, 10, 5, 20, EnumCreatureType.monster, BiomeGenAsteroid.instance);
+    	//EntityRegistry.addSpawn(EntityMinestationMob.class, 10, 5, 20, EnumCreatureType.monster, BiomeGenAsteroid.instance);
     	
     	//Tile entity rendering registry
     	ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAirlock.class, new RenderTileAirlock());
