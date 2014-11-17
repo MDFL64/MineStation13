@@ -33,6 +33,7 @@ public class MsInvInventory extends InventoryPlayer {
 		//Hotbar - Worn Stuff - Pack
 		mainInventory = new ItemStack[9+16+24];
 		//We don't actually use this
+		//I assume that the size of 4 is required to prevent crashes?
 		armorInventory= new ItemStack[4];
 		
 		usableSlotCount=2;

@@ -27,7 +27,7 @@ public class WorldProviderAsteroid extends WorldProvider {
 	protected void registerWorldChunkManager()
     {
 		worldChunkMgr = new WorldChunkManagerHell(BiomeGenAsteroid.instance,0);
-        dimensionId = ModMinestation.dimensionIdAsteroid;
+        dimensionId = ModMinestation.dimensionAsteroidId;
         hasNoSky = true;
     }
 	

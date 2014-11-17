@@ -36,7 +36,7 @@ public class RoundManager { // implements ITickHandler {
 		
 		System.out.println("	-Ejecting players.");
 		
-		WorldServer world = MinecraftServer.getServer().worldServerForDimension(ModMinestation.dimensionIdAsteroid);
+		WorldServer world = MinecraftServer.getServer().worldServerForDimension(ModMinestation.dimensionAsteroidId);
 		
 		Iterator i = world.playerEntities.iterator();
 		
@@ -48,8 +48,8 @@ public class RoundManager { // implements ITickHandler {
 		
 		System.out.println("	-Unloading dimension...");
 		
-		DimensionManager.unregisterDimension(ModMinestation.dimensionIdAsteroid);
-		DimensionManager.unloadWorld(ModMinestation.dimensionIdAsteroid);
+		DimensionManager.unregisterDimension(ModMinestation.dimensionAsteroidId);
+		DimensionManager.unloadWorld(ModMinestation.dimensionAsteroidId);
 		
 		TimerTask task = new TimerTask() {
 			@Override
@@ -57,7 +57,7 @@ public class RoundManager { // implements ITickHandler {
 				System.out.println("	-Deleting dimension files.");
 				
 				File saveDir = DimensionManager.getCurrentSaveRootDirectory();
-				File dimDir = new File(saveDir,"DIM"+ModMinestation.dimensionIdAsteroid);
+				File dimDir = new File(saveDir,"DIM"+ModMinestation.dimensionAsteroidId);
 				
 				deleteDir(dimDir);
 			}

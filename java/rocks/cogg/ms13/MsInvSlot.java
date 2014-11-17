@@ -9,7 +9,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-//Currently does not do anything
+//This is a special inventory slot. It is capable of restricting items to a certain class.
+//It can also be disabled if a parent slot contains no items.
+//TODO should items be stored within in other items themselves?
 
 public class MsInvSlot extends Slot {
 	private Class itemRestriction;
