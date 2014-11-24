@@ -17,7 +17,7 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 //import cpw.mods.fml.common.TickType;
 
 public class TickerInvSwapper { //CLIENTSIDE
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onTick(ClientTickEvent tick) {
 		if (tick.phase==Phase.END) {
 			GuiScreen gui = Minecraft.getMinecraft().currentScreen;
@@ -25,7 +25,7 @@ public class TickerInvSwapper { //CLIENTSIDE
 				Minecraft.getMinecraft().displayGuiScreen(new MsInvGui(Minecraft.getMinecraft().thePlayer));
 			}
 		}
-	}
+	}*/
 }
 	
 	

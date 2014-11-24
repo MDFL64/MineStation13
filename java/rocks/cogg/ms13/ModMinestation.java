@@ -46,6 +46,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
@@ -81,6 +82,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+
+import rocks.cogg.ms13.mobsys.InventoryInjector;
 
 @Mod(modid="ms13", name="MineStation13", version="0")
 //@NetworkMod(clientSideRequired=true, serverSideRequired=false,channels={"ms13"},packetHandler=PacketHandlerMinestation.class)
@@ -282,10 +285,14 @@ public class ModMinestation {
     public void onEntJoined(EntityJoinWorldEvent event) {
     	if (event.entity instanceof EntityPlayer) {
     		EntityPlayer ply = (EntityPlayer)event.entity;
-    		
+    		//ply.inventory = new ProxyInventoryPlayer(ply,ply.inventory);
+    		InventoryInjector.inject(ply, null);
+    		//ply.inventoryContainer.
+    		/*System.out.println("Inventory setup: "+(event.world.isRemote?"CLIENT":"SERVER"));
+    		EntityPlayer ply = (EntityPlayer)event.entity;
     		ply.inventory = new MsInvInventory(ply);
     		ply.inventoryContainer=new MsInvContainer(ply);
-    		ply.openContainer=ply.inventoryContainer;
+    		ply.openContainer=ply.inventoryContainer;*/
     	}
     }
     
