@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -27,11 +28,13 @@ public class InventoryInjector { //this should probably be networked.
 	//We should listen for players being created, inject the default inventory.
 	public static void inject(EntityPlayer ply,EInventoryType t) {
 		//dont worry about the type for now.
-		InventoryMobBase inv = new InventoryMobBase(ply,ply.inventory);
-		ContainerMobBase c = new ContainerMobBase();
+		InventoryMobBase inv = new InventoryMobHuman();
+		ContainerMobBase c = new ContainerMobBase(inv);
+		
+		inv.player = ply;
 		
 		ply.inventory = inv;
-		ply.inventoryContainer = new ContainerMobBase();
+		ply.inventoryContainer = c;
 		ply.closeScreen();
 		//inv.setContainer(c); ... do not do this.
 	}
@@ -45,29 +48,31 @@ public class InventoryInjector { //this should probably be networked.
  * Although this is a subclass of InventoryPlayer, we will be using it in both Player and Non-Player mobs.
  * It should be safe to do so.
  * 
- * We remove a lot of base functionality from this-- there shouldn't be any need to
- * randomly shove items into the inventory in our game.
- * 
- * We will re-use the following parts of the inventory:
- *		mainInventory->Only the hotbar, used for hands and special abilities.
+ * We will re-use slots from the vanilla inventory:
+ *		mainInventory->Hotbar used for hands and special abilities. Rest of the inventory is for clothing, etc.
  *		armorInventory->Outer suits/armor for players, 
  *
  * Keep in mind that this is the base class, intended to be used in stuff like ghosts and the AI...
- * subclasses should do the fun stuff.
+ * subclasses should do the fun stuff. (Actually we might just use it for everything.)
  * 
- * (?) Might just recycle some of the main inventory for everything else... would simplify saving/slot manipulation/everything.
  */
 
-class InventoryMobBase extends InventoryPlayer {
-	//private ContainerMobBase container;
+abstract class InventoryMobBase extends InventoryPlayer {
+	/** The entire width of our hotbar. */
+	protected final int fullHotbarWidth;
+	/** The width of the hotbar that can be freely used by base code and by the player */
+	protected final int freeHotbarWidth;
 	
-	public InventoryMobBase(EntityPlayer par1EntityPlayer,InventoryPlayer old) {
-		super(par1EntityPlayer);
-		mainInventory = new ItemStack[9];
+	public InventoryMobBase(int fullHotbarWidth, int freeHotbarWidth) {
+		super(null);
+		this.fullHotbarWidth = fullHotbarWidth;
+		this.freeHotbarWidth = freeHotbarWidth;
 	}
 	
-	private int getRealHotbarSize() {
-		return 2;
+	public abstract void setupContainer(ContainerMobBase c);
+	
+	public int getFullHotbarWidth() {
+		return fullHotbarWidth;
 	}
 	
 	/**
@@ -76,30 +81,25 @@ class InventoryMobBase extends InventoryPlayer {
 	@Override
     public ItemStack getCurrentItem()
     {
-    	return this.currentItem < getRealHotbarSize() && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;
+    	return this.currentItem < fullHotbarWidth && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;
     }
 
     /**
-     * STUB!
      * Returns the first item stack that is empty.
-     * We don't need this functionality.
      */
 	@Override
     public int getFirstEmptyStack()
     {
+		for (int i = 0; i < freeHotbarWidth; ++i)
+        {
+            if (this.mainInventory[i] == null)
+            {
+                return i;
+            }
+        }
+
         return -1;
     }
-	
-	/**
-	 * STUB!
-	 * Clears inventory using some kind of filter.
-	 * Returns number of items removed.
-	 * Only used in one chat command, we don't need it.
-	 */
-	@Override
-	public int clearInventory(Item p_146027_1_, int p_146027_2_) {
-		return 0;
-	}
 	
 	/**
      * Switch the current item to the next one or the previous one
@@ -108,99 +108,42 @@ class InventoryMobBase extends InventoryPlayer {
      */
 	@Override
     @SideOnly(Side.CLIENT)
-    public void changeCurrentItem(int i)
+    public void changeCurrentItem(int i) //TODO arbitrary slots can still be selected with number keys.
     {
-		int hotbarSize = getRealHotbarSize();
-        if (hotbarSize==0)
+        if (fullHotbarWidth==0)
         	return;
 		
 		if (i > 0) {
-			if (this.currentItem==hotbarSize-1)
-				this.currentItem=0;
+			if (currentItem>=fullHotbarWidth-1)
+				currentItem=0;
 			else
-				this.currentItem++;
+				currentItem++;
 		} else if (i < 0) {
-			if (i==0)
-				this.currentItem=hotbarSize-1;
+			if (currentItem<=0)
+				currentItem=fullHotbarWidth-1;
 			else
-				this.currentItem--;
+				currentItem--;
 		}
     }
 	
-	/**
-	 * STUB!
-     * Remove an item, might need to implement or revert to base functionality later...
-     */
 	@Override
-    public boolean consumeInventoryItem(Item p_146026_1_)
+    public int getInventoryStackLimit()
     {
-        return false;
+		return 16;
     }
 	
-	/**
-	 * STUB!
-     * Checks if a specified Item is inside the inventory
-     * Might need to implement or fevert later...
-     */
-    @Override
-	public boolean hasItem(Item p_146028_1_)
-    {
-        return false;
-    }
-    
-    /**
-     * STUB!
-     * Pretty safe to assume we don't need this.
-     */
-    @Override
-    public boolean addItemStackToInventory(final ItemStack par1ItemStack)
-    {
-    	return false;
-    }
-    
-    /**
-     * STUB!
-     * "Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
-     * new stack."
-     * 
-     * Will probably need this later...
-     */
-    @Override
-    public ItemStack decrStackSize(int par1, int par2) {
-    	return null;
-    }
-    
-    /**
-     * STUB!
-     * 
-     * "When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
-     * like when you close a workbench GUI."
-     * 
-     * This is probably important.
-     */
-    @Override
-    public ItemStack getStackInSlotOnClosing(int par1)
-    {
-       return null;
-    }
+	//Should we implement this? -> isItemValidForSlot 
+}
 
-    /**
-     * STUB!
-     * 
-     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
-     * 
-     * This is almost certainly important.
-     */
-    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
-    {
-        
-    }
-	
-	/*
-	 * cleared up to addItemStackToInventory
-	 */
-	
-	
+class InventoryMobHuman extends InventoryMobBase {
+	public InventoryMobHuman() {
+		super(2, 2);
+	}
+
+	@Override
+	public void setupContainer(ContainerMobBase c) {
+		// TODO Auto-generated method stub
+	}
 }
 
 /**
@@ -213,9 +156,15 @@ class InventoryMobBase extends InventoryPlayer {
  */
 //Container to use for self-inventory
 class ContainerMobBase extends Container {
-	/*public ContainerBase(EntityPlayer entPlayer,boolean isLocal) {
-		figure out what the hell to do here
-	}*/
+	public ContainerMobBase(InventoryMobBase inv) {
+		for (int i=0;i<inv.getFullHotbarWidth();i++)
+			addSlotToContainer(new Slot(inv,i,i*30,10));
+		inv.setupContainer(this);
+	}
+	
+	public void insertSlot(Slot s) {
+		addSlotToContainer(s);
+	}
 	
 	/**
 	 * This is called every tick or so to see if we should keep the container open. Very useful!

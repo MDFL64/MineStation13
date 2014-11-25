@@ -122,8 +122,8 @@ public class RenderMob extends RendererLivingEntity {
     {
 		if (entity instanceof EntityPlayer) {
 			EntityPlayer ply = (EntityPlayer)entity;
-			MsInvInventory inv = (MsInvInventory)ply.inventory;
-			inv.texture.bind();
+			//MsInvInventory inv = (MsInvInventory)ply.inventory;
+			//inv.texture.bind();
 		}
 		
         //Grab texture from entity and do coolstuff
