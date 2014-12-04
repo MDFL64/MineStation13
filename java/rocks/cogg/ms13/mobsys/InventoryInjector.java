@@ -21,6 +21,10 @@ enum EInventoryType {
 	BLANK
 }
 
+enum EMobAbilityType {
+	
+}
+
 /**
  * Injects our new inventory classes into the player, and forces the player to use the new GUI.
  */
@@ -28,7 +32,7 @@ public class InventoryInjector { //this should probably be networked.
 	//We should listen for players being created, inject the default inventory.
 	public static void inject(EntityPlayer ply,EInventoryType t) {
 		//dont worry about the type for now.
-		InventoryMobBase inv = new InventoryMobHuman();
+		InventoryMobBase inv = new InventoryMobHumanoid();
 		ContainerMobBase c = new ContainerMobBase(inv);
 		
 		inv.player = ply;
@@ -58,21 +62,31 @@ public class InventoryInjector { //this should probably be networked.
  */
 
 abstract class InventoryMobBase extends InventoryPlayer {
-	/** The entire width of our hotbar. */
-	protected final int fullHotbarWidth;
+	/** The ability type that the mob uses. Currently not used. */
+	private EMobAbilityType abilityType;
 	/** The width of the hotbar that can be freely used by base code and by the player */
-	protected final int freeHotbarWidth;
+	private int freeHotbarWidth;
 	
-	public InventoryMobBase(int fullHotbarWidth, int freeHotbarWidth) {
-		super(null);
-		this.fullHotbarWidth = fullHotbarWidth;
-		this.freeHotbarWidth = freeHotbarWidth;
+	public InventoryMobBase() {
+		super(null);  
 	}
 	
 	public abstract void setupContainer(ContainerMobBase c);
 	
 	public int getFullHotbarWidth() {
-		return fullHotbarWidth;
+		return abilityType==null?freeHotbarWidth:9;
+	}
+	
+	public void setFreeHotbarWidth(int w) {
+		if (w<0)
+			w=0;
+		else if (w>4)
+			w=4;
+		freeHotbarWidth=w; //TODO make sure items are in right slots, networking
+	} //TODO base this shit off of an item in a specific slot?
+	
+	public int getFreeHotbarWidth() {
+		return freeHotbarWidth;
 	}
 	
 	/**
@@ -81,7 +95,7 @@ abstract class InventoryMobBase extends InventoryPlayer {
 	@Override
     public ItemStack getCurrentItem()
     {
-    	return this.currentItem < fullHotbarWidth && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;
+    	return this.currentItem < getFullHotbarWidth() && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;
     }
 
     /**
@@ -110,17 +124,18 @@ abstract class InventoryMobBase extends InventoryPlayer {
     @SideOnly(Side.CLIENT)
     public void changeCurrentItem(int i) //TODO arbitrary slots can still be selected with number keys.
     {
-        if (fullHotbarWidth==0)
+		int hotbarwidth = getFullHotbarWidth();
+        if (hotbarwidth==0)
         	return;
 		
 		if (i > 0) {
-			if (currentItem>=fullHotbarWidth-1)
+			if (currentItem>=hotbarwidth-1)
 				currentItem=0;
 			else
 				currentItem++;
 		} else if (i < 0) {
 			if (currentItem<=0)
-				currentItem=fullHotbarWidth-1;
+				currentItem=hotbarwidth-1;
 			else
 				currentItem--;
 		}
@@ -135,9 +150,9 @@ abstract class InventoryMobBase extends InventoryPlayer {
 	//Should we implement this? -> isItemValidForSlot 
 }
 
-class InventoryMobHuman extends InventoryMobBase {
-	public InventoryMobHuman() {
-		super(2, 2);
+class InventoryMobHumanoid extends InventoryMobBase {
+	public InventoryMobHumanoid() {
+		setFreeHotbarWidth(2);
 	}
 
 	@Override
@@ -154,11 +169,10 @@ class InventoryMobHuman extends InventoryMobBase {
  * This is because subclasses must be used for containers that interact with OTHER inventories.
  * We may also choose to make this abstract and make specific classes for individual mobs anyway...
  */
-//Container to use for self-inventory
 class ContainerMobBase extends Container {
 	public ContainerMobBase(InventoryMobBase inv) {
-		for (int i=0;i<inv.getFullHotbarWidth();i++)
-			addSlotToContainer(new Slot(inv,i,i*30,10));
+		for (int i=0;i<9;i++) //TODO special slot type that filters stuff based on hotbar slot type...
+			addSlotToContainer(new Slot(inv,i,8+i*18,142));
 		inv.setupContainer(this);
 	}
 	
